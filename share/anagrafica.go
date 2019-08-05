@@ -1,5 +1,9 @@
 package share
 
+import (
+	"fmt"
+)
+
 //Anagrafica ...
 type Anagrafica struct {
 	Denominazione string `xml:"Denominazione" json:"Denominazione"`
@@ -22,7 +26,30 @@ type Anagrafica struct {
 	CodEORI string `xml:"CodEORI" json:"CodEORI"`
 }
 
-// Validate
-func (a Anagrafica) Validate() {
+// Validate ...
+func (a Anagrafica) Validate() error {
+	if len(a.Denominazione) > 80 {
+		return fmt.Errorf("Anagrafica (Denominazione): %s", ErrorLen(80))
+	}
+	if len(a.Nome) > 60 {
+		return fmt.Errorf("Anagrafica (Nome): %s", ErrorLen(60))
+	}
+	if len(a.Cognome) > 60 {
+		return fmt.Errorf("Anagrafica (Nome): %s", ErrorLen(60))
+	}
+	l := len(a.Titolo)
+	if !(l >= 2 && l <= 10) {
+		return fmt.Errorf("Anagrafica (Titolo) %s", ErrorIncluded(2, 10))
+	}
 
+	cl := len(a.CodEORI)
+	if !(cl >= 13 && cl <= 17) {
+		return fmt.Errorf("Anagrafica (CodEORI) %s", ErrorIncluded(13, 17))
+	}
+
+	if a.Denominazione != "" && (a.Nome != "" || a.Cognome != "") {
+		return fmt.Errorf("Anagrafica: you cannot write the field name surname if you have indicated a denomination")
+	}
+
+	return nil
 }
