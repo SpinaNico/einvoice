@@ -22,61 +22,62 @@
 
 ---
 
-#### structure XML and JSON 
+#### structure XML 
 
-+ [FatturaElettronicaBody](#FatturaElettronicaBody) `[]array`
-  + DatiGenerali
-    + DatiGeneraliDocumento `{}object`
-      + TipoDocumento `string` 
-      + Divisa `string`
-      + Data `string` `format: YYYY-MM-DD`
-      + Numero `string`
-      + Causale `[]string`
-      + DatiRitenuta `{}object`
-        + TipoRitenuta 
-        + ImportoRitenuta
-        + AliquotaRitenuta
-        + CausalePagamento
-      + DatiBollosia `{}object`
-        + BolloVirtuale
-        + ImportoBollo
-      + DatiCassaPrevidenziale `{}object`
-        + TipoCassa
-        + AlCassa
-        + ImportoContributoCassa
-        + ImponibileCassa
-        + AliquotaIVA
-        + Ritenuta
-        + Natura
-        + RiferimentoAmministrazione
-      + ScontoMaggiorazione `{}object`
-        + Tipo
-        + Percentuale
-        + Importo
-      + ImportoTotaleDocumento
-      + Arrotondamento
-      + Art73
-    + DatiOrdineAcquisto
-    + DatiContratto
-    + DatiConvenzione
-    + DatiRicezione
-    + DatiTrasporto
-  + DatiBeniServizi
-  + DatiPagamento `{}object`
-    + CondizioniPagamento
-    + DettaglioPagamento
-      + ModalitaPagamento `string`
-      + DataScadenzaPagamento `string` `format:YYYY-MM-DD`
-      + ImportoPagamento `number` 
-  + DatiVeicoli
-    + Data `string` `format:YYYY-MM-DD`
-    + TotalePercorso `string` 
-  + Allegati
-    + NomeAttachment
-    + AlgoritmoCompressione
-    + FormatoAttachment
-    + DescrizioneAttachment
-    + Attachment
+FatturaElettronicaBody
+
++ DatiGenerali
+  + DatiGeneraliDocumento 
+    + TipoDocumento
+    + Divisa 
+    + Data 
+    + Numero 
+    + Causale 
+    + DatiRitenuta 
+      + TipoRitenuta 
+      + ImportoRitenuta
+      + AliquotaRitenuta
+      + CausalePagamento
+    + DatiBollosia `{}object`
+      + BolloVirtuale
+      + ImportoBollo
+    + DatiCassaPrevidenziale `{}object`
+      + TipoCassa
+      + AlCassa
+      + ImportoContributoCassa
+      + ImponibileCassa
+      + AliquotaIVA
+      + Ritenuta
+      + Natura
+      + RiferimentoAmministrazione
+    + ScontoMaggiorazione `{}object`
+      + Tipo
+      + Percentuale
+      + Importo
+    + ImportoTotaleDocumento
+    + Arrotondamento
+    + Art73
+  + DatiOrdineAcquisto
+  + DatiContratto
+  + DatiConvenzione
+  + DatiRicezione
+  + DatiTrasporto
++ DatiBeniServizi
++ DatiPagamento `{}object`
+  + CondizioniPagamento
+  + DettaglioPagamento
+    + ModalitaPagamento `string`
+    + DataScadenzaPagamento `string` `format:YYYY-MM-DD`
+    + ImportoPagamento `number` 
++ DatiVeicoli
+  + Data `string` `format:YYYY-MM-DD`
+  + TotalePercorso `string` 
++ Allegati
+  + NomeAttachment
+  + AlgoritmoCompressione
+  + FormatoAttachment
+  + DescrizioneAttachment
+  + Attachment
 
 
 
