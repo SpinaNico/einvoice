@@ -1,15 +1,15 @@
-module invoice
+module github.com/SpinaNico/go-struct-invoice
 
 go 1.12
 
-replace invoice/header v0.0.0 => ./header
+replace github.com/SpinaNico/go-struct-invoice/header v0.0.0 => ./header
 
-replace invoice/body v0.0.0 => ./body
+replace github.com/SpinaNico/go-struct-invoice/body v0.0.0 => ./body
 
-replace invoice/share v0.0.0 => ./share
+replace github.com/SpinaNico/go-struct-invoice/share v0.0.0 => ./share
 
 require (
-	invoice/body v0.0.0
-	invoice/header v0.0.0
-	invoice/share v0.0.0
+	github.com/SpinaNico/go-struct-invoice/body v0.0.0
+	github.com/SpinaNico/go-struct-invoice/header v0.0.0
+	github.com/SpinaNico/go-struct-invoice/share v0.0.0
 )
