@@ -1,5 +1,9 @@
 package header
 
+import (
+	"fmt"
+)
+
 //FATTURA ELETTRONICA HEADER – Dati di trasmissione										29
 //FATTURA ELETTRONICA HEADER – Dati del cedente/prestatore								30
 //FATTURA ELETTRONICA HEADER – Dati del rappresentante fiscale del cedente/prestatore	33
@@ -23,5 +27,28 @@ type FatturaElettronicaHeader struct {
 
 // Validate : Check data of header
 func (c FatturaElettronicaHeader) Validate() error {
+	var err error
+	err = c.DatiTrasmissione.Validate()
+	if err != nil {
+		return fmt.Errorf("FatturaElettronicaHeader %s", err)
+	}
+
+	err = c.CedentePrestatore.Validate()
+	if err != nil {
+		return fmt.Errorf("FatturaElettronicaHeader %s", err)
+	}
+
+	err = c.CessionarioCommittente.Validate()
+	if err != nil {
+		return fmt.Errorf("FatturaElettronicaHeader %s", err)
+	}
+
+	err = c.TerzoIntermediarioOSoggettoEmittente.Validate()
+	if err != nil {
+		return fmt.Errorf("FatturaElettronicaHeader %s", err)
+	}
+
+	// sogetto Emittente
+
 	return nil
 }

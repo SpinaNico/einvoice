@@ -29,13 +29,13 @@ type Anagrafica struct {
 // Validate ...
 func (a Anagrafica) Validate() error {
 	if len(a.Denominazione) > 80 {
-		return fmt.Errorf("Anagrafica (Denominazione): %s", ErrorLen(80))
+		return fmt.Errorf("Anagrafica (Denominazione): %s", ErrorMaxLength(80))
 	}
 	if len(a.Nome) > 60 {
-		return fmt.Errorf("Anagrafica (Nome): %s", ErrorLen(60))
+		return fmt.Errorf("Anagrafica (Nome): %s", ErrorMaxLength(60))
 	}
 	if len(a.Cognome) > 60 {
-		return fmt.Errorf("Anagrafica (Nome): %s", ErrorLen(60))
+		return fmt.Errorf("Anagrafica (Nome): %s", ErrorMaxLength(60))
 	}
 	l := len(a.Titolo)
 	if !(l >= 2 && l <= 10) {
