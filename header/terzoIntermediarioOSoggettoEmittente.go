@@ -1,6 +1,6 @@
 package header
 
-import share "invoice/share"
+import share "github.com/SpinaNico/go-struct-invoice/share"
 
 type terzoIntermediarioOSoggettoEmittente struct {
 	IDFiscaleIVA  share.IDFiscaleIVA `xml:"IdFiscaleIVA" json:"IdFiscaleIVA"`

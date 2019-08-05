@@ -1,6 +1,6 @@
 package header
 
-import share "invoice/share"
+import share "github.com/SpinaNico/go-struct-invoice/share"
 
 // Trovi descrizioni nella sezione 2.2.4.1 Dati Anagrafici
 type datiAnagrafici struct {
