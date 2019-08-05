@@ -104,3 +104,43 @@ func (c indirizzo) Validate() error {
 
 	return nil
 }
+
+type telefono string
+
+func (c telefono) Validate() error {
+	if !(len(string(c)) >= 5 && len(string(c)) <= 12) {
+		return fmt.Errorf("(Telefono): %s", share.ErrorIncluded(5, 12))
+
+	}
+	return nil
+}
+
+type email string
+
+func (c email) Validate() error {
+	if !(len(string(c)) >= 7 && len(string(c)) <= 256) {
+		return fmt.Errorf("(Email): %s", share.ErrorIncluded(7, 256))
+
+	}
+	return nil
+}
+
+type pecDestinatario string
+
+func (c pecDestinatario) Validate() error {
+	if !(len(string(c)) >= 7 && len(string(c)) <= 256) {
+		return fmt.Errorf("(PECDestinatario): %s", share.ErrorIncluded(7, 256))
+
+	}
+	return nil
+}
+
+type progressivoInvio string
+
+func (c progressivoInvio) Validate() error {
+	if len(string(c)) > 10 {
+		return fmt.Errorf("(ProgressivoInvio): %s", share.ErrorMaxLength(10))
+	}
+
+	return nil
+}
