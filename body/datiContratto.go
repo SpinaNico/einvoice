@@ -16,7 +16,7 @@ type datiContratto struct {
 
 	//Data: data del contratto associato alla fattura o alla linea/linee
 	//di fattura indicate nell’elemento RiferimentoNumeroLinea.
-	Data string `xml:"Data" json:"Data"`
+	Data data `xml:"Data" json:"Data"`
 
 	// NumItem: identificativo della singola voce (linea di contratto)
 	//all'interno del contratto associata alla fattura o alla linea/linee

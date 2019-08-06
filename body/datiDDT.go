@@ -1,4 +1,4 @@
-package header
+package body
 
 //2.2.9.4 Dati Ddt (Documento Di Trasporto)
 // DatiDDT (nei casi in cui sia presente un documento di trasporto
@@ -9,7 +9,7 @@ type datiDDT struct {
 	NumeroDDT int `xml:"NumeroDDT" json:"NumeroDDT"`
 
 	//DataDDT: data del Documento Di Trasporto
-	DataDDT string `xml:"DataDDT" json:"DataDTT"`
+	DataDDT data `xml:"DataDDT" json:"DataDTT"`
 
 	//RiferimentoNumeroLinea: numero della linea o delle linee di
 	//dettaglio della fattura alle quali si riferisce il DDT (così come

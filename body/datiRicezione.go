@@ -16,7 +16,7 @@ type datiRicezione struct {
 
 	// Data: data della ricezione associata alla fattura o alla
 	//linea/linee di fattura indicate nell’elemento RiferimentoNumeroLinea.
-	Data string `xml:"Data" json:"Data"`
+	Data data `xml:"Data" json:"Data"`
 
 	//NumItem: identificativo della singola voce (linea di ricezione)
 	//all'interno della ricezione associata alla fattura o alla

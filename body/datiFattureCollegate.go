@@ -21,7 +21,7 @@ type datiFattureCollegate struct {
 	//RiferimentoNumeroLinea. Non può essere mai successiva alla
 	//data del documento in oggetto; in caso contrario il file viene
 	//scartato con codice errore 00418.
-	Data string `xml:"Data" json:"Data"`
+	Data data `xml:"Data" json:"Data"`
 
 	//NumItem: identificativo della singola voce (linea di fattura
 	//collegata) all'interno della fattura collegata associata al

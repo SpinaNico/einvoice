@@ -4,8 +4,8 @@ package body
 type FatturaElettronicaBody struct {
 	DatiGenerali    datiGenerali    `xml:"DatiGenerali" json:"DatiGenerali"`
 	DatiBeniServizi datiBeniServizi `xml:"DatiBeniServizi" json:"DatiBeniServizi"`
-	DatiPagamento   datiPagamento   `xml:"DatiPagamento" json:"DatiPagamento"`
 	DatiVeicolo     datiVeicolo     `xml:"DatiVeicolo" json:"DatiVeicolo"`
+	DatiPagamento   datiPagamento   `xml:"DatiPagamento" json:"DatiPagamento"`
 	Allegati        allegati        `xml:"Allegati" json:"Allegati"`
 }
 

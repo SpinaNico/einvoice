@@ -1,8 +1,7 @@
-package header
+package body
 
 import (
 	"fmt"
-	"strconv"
 )
 
 //2.2.9.3 Dati Riferimento Sal

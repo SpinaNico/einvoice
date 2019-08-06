@@ -17,7 +17,7 @@ type datiConvenzione struct {
 
 	//Data: data della convenzione associata alla fattura o alla
 	//linea/linee di fattura indicate  nell’elemento RiferimentoNumeroLinea.
-	Data string `xml:"Data" json:"Data"`
+	Data data `xml:"Data" json:"Data"`
 
 	//NumItem: identificativo della singola voce (linea di
 	//convenzione) all'interno della convenzione associata alla
