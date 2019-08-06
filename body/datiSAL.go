@@ -1,5 +1,10 @@
 package header
 
+import (
+	"fmt"
+	"strconv"
+)
+
 //2.2.9.3 Dati Riferimento Sal
 //Blocco da valorizzare nei casi di fattura per stato di avanzamento
 //RiferimentoFase: formato numerico; lunghezza massima di 3 caratteri.
@@ -9,5 +14,8 @@ type datiSAL struct {
 }
 
 func (c datiSAL) Validate() error {
+	if c.RiferimentoFase > 999 {
+		return fmt.Errorf("DatiSal (RiferimentoFase): max 999, min 1")
+	}
 	return nil
 }

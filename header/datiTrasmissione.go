@@ -64,6 +64,10 @@ func (c datiTrasmissione) Validate() error {
 		return fmt.Errorf("DatiTrasmissione %s", err)
 	}
 
+	if err = c.ContattiTrasmittente.Validate(); err != nil {
+		return fmt.Errorf("DatiTrasmissione %s", err)
+	}
+
 	if len(string(c.PECDestinatario)) == 0 && string(c.CodiceDestinatario) == "0000000" {
 		return fmt.Errorf("DatiTrasmissione: You can't give me a Pec, with the recipient code \"0000000\" you have to give me a code, or the PEC")
 	}
