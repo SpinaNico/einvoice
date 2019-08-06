@@ -2,8 +2,10 @@
 
 > Allegati > Attachment > Controllare se è base64 
 
+> **datiCassaPrevidenziale > AliquotaIva**
+> Viene detto di settarlo con zero ma si intende: "0" intero o "0.0"
 
-
+> dati Cassa previdenziale > ritenuta SI ma solo se ci sono i dati
 ---
 
 #### structure XML 
