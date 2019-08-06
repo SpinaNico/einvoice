@@ -1,5 +1,7 @@
 package body
 
+import "fmt"
+
 //DatiRicezione (dati relativi alla ricezione dei beni/servizi oggetto del
 //documento fattura)
 type datiRicezione struct {
@@ -8,11 +10,11 @@ type datiRicezione struct {
 	//come identificata dai tre elementi successivi (IdDocumento,
 	//Data, NumItem); nel caso in cui la ricezione si riferisce
 	//all’intera fattura, questo elemento non deve essere valorizzato.
-	RiferimentoNumeroLinea string `xml:"RiferimentoNumeroLinea" json:"RiferimentoNumeroLinea"`
+	RiferimentoNumeroLinea numeroLinea `xml:"RiferimentoNumeroLinea" json:"RiferimentoNumeroLinea"`
 
 	//IdDocumento: numero della ricezione associata alla fattura o
 	//alla linea/linee di fattura indicate nel campo RiferimentoNumeroLinea.
-	IDDocumento string `xml:"IdDocumento" json:"IdDocumento"`
+	IDDocumento idDocumento `xml:"IdDocumento" json:"IdDocumento"`
 
 	// Data: data della ricezione associata alla fattura o alla
 	//linea/linee di fattura indicate nell’elemento RiferimentoNumeroLinea.
@@ -21,26 +23,49 @@ type datiRicezione struct {
 	//NumItem: identificativo della singola voce (linea di ricezione)
 	//all'interno della ricezione associata alla fattura o alla
 	//linea/linee di fattura indicate nell’elemento RiferimentoNumeroLinea.
-	NumItem string `xml:"NumItem" json:"NumItem"`
+	NumItem numItem `xml:"NumItem" json:"NumItem"`
 
 	//CodiceCommessaConvenzione: codice della commessa o
 	//della convenzione collegata alla fattura.
-	CodiceCommessaConvenzione string `xml:"CodiceCommessaConvenzione" json:"CodiceCommessaConvenzione"`
+	CodiceCommessaConvenzione codiceCommessaConvenzione `xml:"CodiceCommessaConvenzione" json:"CodiceCommessaConvenzione"`
 
 	//CodiceCUP: codice gestito dal CIPE che caratterizza ogni
 	//progetto di investimento pubblico (Codice Unitario Progetto).
-	CodiceCUP string `xml:"CodiceCUP" json:"CodiceCUP"`
+	CodiceCUP codiceCup `xml:"CodiceCUP" json:"CodiceCUP"`
 
 	//CodiceCIG: Codice Identificativo della Gara.
-	CodiceCIG string `xml:"CodiceCIG" json:"CodiceCIG"`
+	CodiceCIG codiceCig `xml:"CodiceCIG" json:"CodiceCIG"`
 }
 
-// - RiferimentoNumeroLinea: formato numerico; lunghezza massima di 4 caratteri.
-// - IdDocumento: formato alfanumerico; lunghezza massima di 20 caratteri.
-// - Data: la data deve essere rappresentata secondo il formato ISO 8601:2004, con la seguente precisione: YYYY-MM-DD.
-// - NumItem: formato alfanumerico; lunghezza massima di 20 caratteri.
-// - CodiceCUP: formato alfanumerico; lunghezza massima di 15 caratteri.
-// - CodiceCIG: formato alfanumerico; lunghezza massima di 15 caratteri.
 func (c datiRicezione) Validate() error {
-	return nil
+	var err error
+
+	if err = c.Data.Validate(); err != nil {
+		return fmt.Errorf("Data %s", err)
+	}
+
+	if err = c.CodiceCIG.Validate(); err != nil {
+		return fmt.Errorf("CodiceCIG %s", err)
+	}
+
+	if err = c.CodiceCUP.Validate(); err != nil {
+		return fmt.Errorf("CodiceCUP %s", err)
+	}
+	if err = c.RiferimentoNumeroLinea.Validate(); err != nil {
+		return fmt.Errorf("RiferimentoNumeroLinea %s", err)
+	}
+
+	if err = c.NumItem.Validate(); err != nil {
+		return fmt.Errorf("NumItem %s", err)
+	}
+
+	if err = c.CodiceCommessaConvenzione.Validate(); err != nil {
+		return fmt.Errorf("CodiceCommessaConvenzione %s", err)
+	}
+
+	if err = c.IDDocumento.Validate(); err != nil {
+		return fmt.Errorf("IDDocumento %s", err)
+	}
+
+	return err
 }
