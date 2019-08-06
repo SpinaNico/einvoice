@@ -144,3 +144,21 @@ func (c progressivoInvio) Validate() error {
 
 	return nil
 }
+
+type codiceDestinatario string
+
+func (c codiceDestinatario) Validate() error {
+	if len(string(c)) != 7 {
+		return fmt.Errorf("(CodiceDestinatario): %s", share.ErrorEgual(7))
+	}
+	return nil
+}
+
+type formatoTrasmissione string
+
+func (c formatoTrasmissione) Validate() error {
+	if string(c) != "FPR12" {
+		return fmt.Errorf("(FormatoTrasmissione): is not FPR12")
+	}
+	return nil
+}
