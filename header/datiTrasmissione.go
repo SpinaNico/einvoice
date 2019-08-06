@@ -43,28 +43,24 @@ type datiTrasmissione struct {
 
 func (c datiTrasmissione) Validate() error {
 	var err error
-	err = c.IDTrasmittente.Validate()
-	if err != nil {
+
+	if err = c.IDTrasmittente.Validate(); err != nil {
 		return fmt.Errorf("DatiTrasmissione %s", err)
 	}
 
-	err = c.PECDestinatario.Validate()
-	if err != nil {
+	if err = c.PECDestinatario.Validate(); err != nil {
 		return fmt.Errorf("DatiTrasmissione %s", err)
 	}
 
-	err = c.ProgressivoInvio.Validate()
-	if err != nil {
+	if err = c.ProgressivoInvio.Validate(); err != nil {
 		return fmt.Errorf("DatiTrasmissione %s", err)
 	}
 
-	err = c.CodiceDestinatario.Validate()
-	if err != nil {
+	if err = c.CodiceDestinatario.Validate(); err != nil {
 		return fmt.Errorf("DatiTrasmissione %s", err)
 	}
 
-	err = c.FormatoTrasmissione.Validate()
-	if err != nil {
+	if err = c.FormatoTrasmissione.Validate(); err != nil {
 		return fmt.Errorf("DatiTrasmissione %s", err)
 	}
 
