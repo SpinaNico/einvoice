@@ -1,5 +1,9 @@
 package body
 
+import (
+	"fmt"
+)
+
 //FatturaElettronicaBody corpo della fattura
 type FatturaElettronicaBody struct {
 	DatiGenerali    datiGenerali    `xml:"DatiGenerali" json:"DatiGenerali"`
@@ -11,5 +15,26 @@ type FatturaElettronicaBody struct {
 
 // Validate ...
 func (f FatturaElettronicaBody) Validate() error {
+	var err error
+
+	if err = f.DatiGenerali.Validate(); err != nil {
+		return fmt.Errorf("FatturaElettronicaBody %s", err)
+	}
+
+	if err = f.DatiBeniServizi.Validate(); err != nil {
+		return fmt.Errorf("FatturaElettronicaBody %s", err)
+	}
+
+	if err = f.DatiVeicolo.Validate(); err != nil {
+		return fmt.Errorf("FatturaElettronicaBody %s", err)
+	}
+
+	if err = f.DatiPagamento.Validate(); err != nil {
+		return fmt.Errorf("FatturaElettronicaBody %s", err)
+	}
+
+	if err = f.Allegati.Validate(); err != nil {
+		return fmt.Errorf("FatturaElettronicaBody %s", err)
+	}
 	return nil
 }

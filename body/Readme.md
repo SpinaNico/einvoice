@@ -1,24 +1,8 @@
 #### Body Invoices
 
-**IT**
-
-**Se vuoi usare questa libreria, ti segnalo che ho creato già le stretture in typescript che trovi [QUI]().**
-
-**Questa libreria fa parte dell'applicazione [invoices.spinanico.com](https://invoices.spinanico.com)   dove è stata implementata e creata l'interfaccia web. Puoi usare liberamente l'applicazione,  se  vuoi vedere come l'ho fatta trovi il codice [QUI]()**
-
-**Note**: *Questo pacchetto è un sotto pacchetto del pacchetto [structinvoice]()*
+> Allegati > Attachment > Controllare se è base64 
 
 
-
-**EN**
-
-....
-
----
-
-**go dependencies:**
-
-+ ***structinvoice/share*** `internal`
 
 ---
 
