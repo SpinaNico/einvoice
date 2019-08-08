@@ -1,12 +1,15 @@
 package body
 
+import share "github.com/SpinaNico/go-struct-invoice/share"
+import "fmt"
+
 //2.2.9.4 Dati Ddt (Documento Di Trasporto)
 // DatiDDT (nei casi in cui sia presente un documento di trasporto
 //collegato alla fattura, casi di fatturazione differita, vanno valorizzati i
 //seguenti elementi per ogni documento di trasporto)
 type datiDDT struct {
 	//NumeroDDT: numero del Documento Di Trasporto.
-	NumeroDDT int `xml:"NumeroDDT" json:"NumeroDDT"`
+	NumeroDDT string `xml:"NumeroDDT" json:"NumeroDDT"`
 
 	//DataDDT: data del Documento Di Trasporto
 	DataDDT data `xml:"DataDDT" json:"DataDTT"`
@@ -16,9 +19,20 @@ type datiDDT struct {
 	//identificato dagli elementi NumeroDDT e DataDDT); nel caso
 	//in cui il documento di trasporto si riferisce all’intera fattura,
 	//questo elemento non deve essere valorizzato.
-	RiferimentoNumeroLinea int `xml:"RiferimentoNumeroLinea" json:"RiferimentoNumeroLinea"`
+	RiferimentoNumeroLinea numeroLinea `xml:"RiferimentoNumeroLinea" json:"RiferimentoNumeroLinea"`
 }
 
 func (c datiDDT) Validate() error {
+	var err error
+
+	if err = c.DataDDT.Validate(); err != nil {
+		return fmt.Errorf("DataDDT %s", err)
+	}
+	if err = c.RiferimentoNumeroLinea.Validate(); err != nil {
+		return fmt.Errorf("RiferimentoNumeroLinea %s", err)
+	}
+	if len(c.NumeroDDT) > 20 {
+		return fmt.Errorf("NumeroDDT %s", share.ErrorMaxLength(20))
+	}
 	return nil
 }
