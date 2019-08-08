@@ -11,7 +11,7 @@ type datiGeneraliDocumento struct {
 	// + TD05 Nota di Debito
 	// + TD06 Parcella
 	// + TD20 Autofattura
-	TipoDocumento string `xml:"TipoDocumento" json:"TipoDocumento"`
+	TipoDocumento tipoDocumento `xml:"TipoDocumento" json:"TipoDocumento"`
 
 	// Divisa: tipo di valuta utilizzata per l'indicazione degli importi.
 	Divisa string `xml:"Divisa" json:"Divisa"`
