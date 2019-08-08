@@ -2,14 +2,28 @@ package invoice
 
 import (
 	"fmt"
+
 	body "github.com/SpinaNico/go-struct-invoice/body"
 	header "github.com/SpinaNico/go-struct-invoice/header"
 )
 
+type versione string
+
+//FatturaElettronicaBody corpo della fattura
+type FatturaElettronicaBody struct {
+	body.FatturaElettronicaBody
+}
+
+// FatturaElettronicaHeader ...
+type FatturaElettronicaHeader struct {
+	header.FatturaElettronicaHeader
+}
+
 // FatturaElettronica Fattura elettronica
 type FatturaElettronica struct {
-	FatturaElettronicaHeader header.FatturaElettronicaHeader `xml:"FatturaElettronicaHeader" json:"header"`
-	FatturaElettronicaBody   []body.FatturaElettronicaBody   `xml:"FatturaElettronicaBody" json:"body"`
+	Versione                 versione                 `xml:"versione,attr"`
+	FatturaElettronicaHeader FatturaElettronicaHeader `xml:"FatturaElettronicaHeader" json:"header"`
+	FatturaElettronicaBody   []FatturaElettronicaBody `xml:"FatturaElettronicaBody" json:"body"`
 	// ds:Signature todo: firma digitale da implementare
 }
 
