@@ -8,11 +8,11 @@ type datiGenerali struct {
 	DatiContratto         datiContratto         `xml:"DatiContratto" json:"DatiContratto"`
 	DatiConvenzione       datiConvenzione       `xml:"DatiConvenzione" json:"DatiConvenzione"`
 	DatiRicezione         datiRicezione         `xml:"DatiRicezione" json:"DatiRicezione"`
-	//DatiFattureCollegate
-	DatiSAL       datiSAL       `xml:"DatiSAL" json:"DatiSAL"`
-	DatiDDT       datiDDT       `xml:"DatiDDT" json:"DatiDDT"`
-	DatiTrasporto datiTrasporto `xml:"DatiTrasporto" json:"DatiTrasporto"`
-	//FatturaPrincipale
+	DatiFattureCollegate  datiFattureCollegate  `xml:"DatiFattureCollegate" json:"DatiFattureCollegate"`
+	DatiSAL               datiSAL               `xml:"DatiSAL" json:"DatiSAL"`
+	DatiDDT               datiDDT               `xml:"DatiDDT" json:"DatiDDT"`
+	DatiTrasporto         datiTrasporto         `xml:"DatiTrasporto" json:"DatiTrasporto"`
+	FatturaPrincipale     fatturaPrincipale     `xml:"FatturaPrincipale" json:"FatturaPrincipale"`
 }
 
 // Validate ...

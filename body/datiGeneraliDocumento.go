@@ -14,7 +14,7 @@ type datiGeneraliDocumento struct {
 	TipoDocumento tipoDocumento `xml:"TipoDocumento" json:"TipoDocumento"`
 
 	// Divisa: tipo di valuta utilizzata per l'indicazione degli importi.
-	Divisa string `xml:"Divisa" json:"Divisa"`
+	Divisa divisa `xml:"Divisa" json:"Divisa"`
 
 	// Data: data del documento.
 	Data data `xml:"Data" json:"Data"`
@@ -28,8 +28,10 @@ type datiGeneraliDocumento struct {
 	DatiBollo              datiBollo              `xml:"DatiBollo" json:"DatiBollo"`
 	DatiCassaPrevidenziale datiCassaPrevidenziale `xml:"DatiCassaPrevidenziale" json:"DatiCassaPrevidenziale "`
 	ScontoMaggiorazione    scontoMaggiorazione    `xml:"ScontoMaggiorazione" json:"ScontoMaggiorazione"`
-	ImportoTotaleDocumento float32                `xml:"ImportoTotaleDocumento" json:"ImportoTotaleDocumento"`
-	Arrotondamento         float32                `xml:"Arrotondamento" json:"Arrotondamento"`
+	// max length 15 characters and minium length 4 (00.00)
+	ImportoTotaleDocumento decimale2 `xml:"ImportoTotaleDocumento" json:"ImportoTotaleDocumento"`
+	// max length 15 characters and minium length 4 (00.00)
+	Arrotondamento decimale2 `xml:"Arrotondamento" json:"Arrotondamento"`
 	// Causale: descrizione della causale del documento.
 	Causale []string `xml:"Causale" json:"Causale"`
 	Art73   string   `xml:"Art73" json:"Art73"`
