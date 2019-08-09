@@ -2,6 +2,8 @@ package body
 
 import (
 	"fmt"
+
+	"github.com/SpinaNico/go-struct-invoice/share"
 )
 
 //2.2.9.3 Dati Riferimento Sal
@@ -14,7 +16,7 @@ type datiSAL struct {
 
 func (c datiSAL) Validate() error {
 	if c.RiferimentoFase > 999 {
-		return fmt.Errorf("DatiSal (RiferimentoFase): max 999, min 1")
+		return fmt.Errorf("DatiSal %s", share.ErrorIncluded(0, 999))
 	}
 	return nil
 }
