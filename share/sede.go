@@ -1,10 +1,11 @@
-package header
+package share
 
 import (
 	"fmt"
 )
 
-type sede struct {
+// IndirizzoType ...
+type IndirizzoType struct {
 	Indirizzo    indirizzo    `xml:"Indirizzo" json:"Indirizzo"`
 	NumeroCivico numeroCivico `xml:"NumeroCivico" json:"NumeroCivico"`
 	// **IT** Codice avviamento postale
@@ -16,7 +17,8 @@ type sede struct {
 	Nazione   nazione   `xml:"Nazione" json:"Nazione"`
 }
 
-func (c sede) Validate() error {
+// Validate ...
+func (c IndirizzoType) Validate() error {
 	var err error
 	err = c.CAP.Validate()
 	if err != nil {
