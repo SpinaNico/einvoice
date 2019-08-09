@@ -2,9 +2,11 @@ package header
 
 import (
 	"fmt"
-	"github.com/SpinaNico/go-struct-invoice/share"
+	"regexp"
 	"strconv"
 	"strings"
+
+	"github.com/SpinaNico/go-struct-invoice/share"
 )
 
 type regimeFiscale string
@@ -119,8 +121,11 @@ type email string
 
 func (c email) Validate() error {
 	if !(len(string(c)) >= 7 && len(string(c)) <= 256) {
-		return fmt.Errorf("(Email): %s", share.ErrorIncluded(7, 256))
-
+		return fmt.Errorf("%s", share.ErrorIncluded(7, 256))
+	}
+	m, _ := regexp.Match(`\w*@\w*\.\w*`, []byte(c))
+	if m == false {
+		return fmt.Errorf("%s", share.ErrorIncorrectValue(string(c)))
 	}
 	return nil
 }

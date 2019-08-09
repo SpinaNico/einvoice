@@ -14,14 +14,12 @@ type contatti struct {
 func (c contatti) Validate() error {
 	var err error
 
-	err = c.Email.Validate()
-	if err != nil {
-		return fmt.Errorf("Contatti %s", err)
+	if err = c.Email.Validate(); err != nil {
+		return fmt.Errorf("Email %s", err)
 	}
 
-	err = c.Telefono.Validate()
-	if err != nil {
-		return fmt.Errorf("Contatti %s", err)
+	if err = c.Telefono.Validate(); err != nil {
+		return fmt.Errorf("Telefono %s", err)
 	}
 	return nil
 }
