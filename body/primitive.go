@@ -2,6 +2,7 @@ package body
 
 import (
 	"fmt"
+	"regexp"
 	"strconv"
 	"strings"
 
@@ -24,6 +25,10 @@ func (c data) Validate() error {
 type dataOra string
 
 func (c dataOra) Validate() error {
+	matched, _ := regexp.Match(`\d\d\d-\d\d-\d\d\d\d\d:\d\d:\d\d`, []byte(c))
+	if !matched {
+		return fmt.Errorf("%s", share.ErrorIncorrectValue(string(c)))
+	}
 	return nil
 }
 
