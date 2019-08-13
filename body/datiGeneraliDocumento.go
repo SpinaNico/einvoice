@@ -1,5 +1,11 @@
 package body
 
+import (
+	"fmt"
+
+	"github.com/SpinaNico/go-struct-invoice/share"
+)
+
 type datiGeneraliDocumento struct {
 	//TipoDocumento: tipologia del documento oggetto della trasmissione
 	//(fattura, acconto/anticipo su fattura, acconto/anticipo su parcella ,
@@ -11,10 +17,10 @@ type datiGeneraliDocumento struct {
 	// + TD05 Nota di Debito
 	// + TD06 Parcella
 	// + TD20 Autofattura
-	TipoDocumento string `xml:"TipoDocumento" json:"TipoDocumento"`
+	TipoDocumento tipoDocumento `xml:"TipoDocumento" json:"TipoDocumento"`
 
 	// Divisa: tipo di valuta utilizzata per l'indicazione degli importi.
-	Divisa string `xml:"Divisa" json:"Divisa"`
+	Divisa divisa `xml:"Divisa" json:"Divisa"`
 
 	// Data: data del documento.
 	Data data `xml:"Data" json:"Data"`
@@ -28,14 +34,66 @@ type datiGeneraliDocumento struct {
 	DatiBollo              datiBollo              `xml:"DatiBollo" json:"DatiBollo"`
 	DatiCassaPrevidenziale datiCassaPrevidenziale `xml:"DatiCassaPrevidenziale" json:"DatiCassaPrevidenziale "`
 	ScontoMaggiorazione    scontoMaggiorazione    `xml:"ScontoMaggiorazione" json:"ScontoMaggiorazione"`
-	ImportoTotaleDocumento float32                `xml:"ImportoTotaleDocumento" json:"ImportoTotaleDocumento"`
-	Arrotondamento         float32                `xml:"Arrotondamento" json:"Arrotondamento"`
+	// max length 15 characters and minium length 4 (00.00)
+	ImportoTotaleDocumento decimale2 `xml:"ImportoTotaleDocumento" json:"ImportoTotaleDocumento"`
+	// max length 15 characters and minium length 4 (00.00)
+	Arrotondamento decimale2 `xml:"Arrotondamento" json:"Arrotondamento"`
 	// Causale: descrizione della causale del documento.
 	Causale []string `xml:"Causale" json:"Causale"`
-	Art73   string   `xml:"Art73" json:"Art73"`
+	//Art73: formato alfanumerico; lunghezza di 2 caratteri;
+	// il valore ammesso è:
+	// + SI
+	// ---
+	// documento emesso secondo modalità e termini stabiliti con DM ai sensi del’’art. 73 del DPR 633/72.
+	Art73 string `xml:"Art73" json:"Art73"`
 }
 
 // Validate ...
 func (f datiGeneraliDocumento) Validate() error {
-	return nil
+	var err error
+
+	if err = f.TipoDocumento.Validate(); err != nil {
+		return fmt.Errorf("TipoDocumento %s", err)
+	}
+	if err = f.Divisa.Validate(); err != nil {
+		return fmt.Errorf("Divisa %s", err)
+	}
+	if err = f.Data.Validate(); err != nil {
+		return fmt.Errorf("Data %s", err)
+	}
+	if err = f.DatiRitenuta.Validate(); err != nil {
+		return fmt.Errorf("DatiRitenuta %s", err)
+	}
+	if err = f.DatiBollo.Validate(); err != nil {
+		return fmt.Errorf("DatiBollo %s", err)
+	}
+	if err = f.DatiCassaPrevidenziale.Validate(); err != nil {
+		return fmt.Errorf("DatiCassaPrevidenziale %s", err)
+	}
+	if err = f.ScontoMaggiorazione.Validate(); err != nil {
+		return fmt.Errorf("ScontoMaggiorazione %s", err)
+	}
+	if err = f.ImportoTotaleDocumento.Validate(); err != nil {
+		return fmt.Errorf("ImportoTotaleDocumento %s", err)
+	}
+	if err = f.Arrotondamento.Validate(); err != nil {
+		return fmt.Errorf("Arrotondamento %s", err)
+	}
+	// Causale
+	// Art73
+	// Numero
+	if len(f.Numero) > 20 {
+		return fmt.Errorf("Numero %s", share.ErrorMaxLength(20))
+	}
+	if f.Art73 != "SI" {
+		return fmt.Errorf("Art73 %s", share.ErrorIncorrectValue(f.Art73))
+	}
+	n := 0
+	for _, val := range f.Causale {
+		n = n + len(val)
+	}
+	if n > 200 {
+		return fmt.Errorf("Casuale %s", share.ErrorMaxLength(200))
+	}
+	return err
 }

@@ -2,6 +2,7 @@ package body
 
 import (
 	"fmt"
+
 	"github.com/SpinaNico/go-struct-invoice/share"
 )
 
@@ -22,15 +23,15 @@ type allegati struct {
 func (c allegati) Validate() error {
 
 	if len(c.NomeAttachment) > 60 {
-		return fmt.Errorf("Allegati (NomeAttachment) %s", share.ErrorMaxLength(60))
+		return fmt.Errorf("NomeAttachment %s", share.ErrorMaxLength(60))
 	}
 
 	if len(c.FormatoAttachment) > 10 {
-		return fmt.Errorf("Allegati (FormatoAttachment) %s", share.ErrorMaxLength(10))
+		return fmt.Errorf("FormatoAttachment %s", share.ErrorMaxLength(10))
 	}
 
 	if len(c.DescrizioneAttachment) > 100 {
-		return fmt.Errorf("Allegati (DescrizioneAttachment) %s", share.ErrorMaxLength(100))
+		return fmt.Errorf("DescrizioneAttachment %s", share.ErrorMaxLength(100))
 	}
 	// Attachment test?
 	return nil

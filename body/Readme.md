@@ -6,6 +6,8 @@
 > Viene detto di settarlo con zero ma si intende: "0" intero o "0.0"
 
 > dati Cassa previdenziale > ritenuta SI ma solo se ci sono i dati
+
+> datiRitenuta > CausalePagamento Può avere i valori CU, ZO, M2 ma cosa indicano?
 ---
 
 #### structure XML 

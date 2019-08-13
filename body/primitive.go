@@ -2,8 +2,11 @@ package body
 
 import (
 	"fmt"
-	"github.com/SpinaNico/go-struct-invoice/share"
+	"regexp"
 	"strconv"
+	"strings"
+
+	"github.com/SpinaNico/go-struct-invoice/share"
 )
 
 // YYYY-MM-DD.
@@ -22,6 +25,10 @@ func (c data) Validate() error {
 type dataOra string
 
 func (c dataOra) Validate() error {
+	matched, _ := regexp.Match(`\d\d\d-\d\d-\d\d\d\d\d:\d\d:\d\d`, []byte(c))
+	if !matched {
+		return fmt.Errorf("%s", share.ErrorIncorrectValue(string(c)))
+	}
 	return nil
 }
 
@@ -135,7 +142,56 @@ func (c natura) Validate() error {
 		values[fmt.Sprintf("N%d", i)] = "true"
 	}
 	if _, ok := values[string(c)]; ok == false {
-		return fmt.Errorf("Natura %s", share.ErrorIncorrectValue(string(c)))
+		return fmt.Errorf("%s", share.ErrorIncorrectValue(string(c)))
 	}
+	return nil
+}
+
+//TipoDocumento: tipologia del documento oggetto della trasmissione
+//(fattura, acconto/anticipo su fattura, acconto/anticipo su parcella ,
+// nota di credito, nota di debito, parcella, autofattura).
+// + TD01 Fattura
+// + TD02 Acconto/Anticipo su fattura
+// + TD03 Acconto/Anticipo su parcella
+// + TD04 Nota di Credito
+// + TD05 Nota di Debito
+// + TD06 Parcella
+// + TD20 Autofattura
+type tipoDocumento string
+
+func (c tipoDocumento) Validate() error {
+
+	if len(string(c)) != 4 {
+		return fmt.Errorf("%s", share.ErrorEgual(4))
+	}
+	c = tipoDocumento(strings.ToUpper(string(c)))
+	switch string(c) {
+	case "TD01":
+		return nil
+	case "TD02":
+		return nil
+	case "TD03":
+		return nil
+	case "TD04":
+		return nil
+	case "TD05":
+		return nil
+	case "TD06":
+		return nil
+	case "TD20":
+		return nil
+	default:
+		return fmt.Errorf("%s", share.ErrorIncorrectValue(string(c)))
+	}
+
+}
+
+type divisa string
+
+func (c divisa) Validate() error {
+	if len(string(c)) != 3 {
+		return fmt.Errorf("%s", share.ErrorEgual(3))
+	}
+	c = divisa(strings.ToUpper(string(c)))
 	return nil
 }
