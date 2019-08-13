@@ -1,4 +1,4 @@
-module invoice/header
+module github.com/SpinaNico/go-struct-invoice/header
 
 go 1.12
 

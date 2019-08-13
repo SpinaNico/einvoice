@@ -1,4 +1,4 @@
-module body
+module github.com/SpinaNico/go-struct-invoice/body
 
 go 1.12
 
