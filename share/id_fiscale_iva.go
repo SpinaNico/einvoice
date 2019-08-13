@@ -30,7 +30,7 @@ func (a IDFiscaleIVA) Validate() error {
 		return fmt.Errorf("IDFiscaleIVA, (IdCodice): %s", ErrorMaxLength(28))
 	}
 	if len(a.IDPaese) != 2 {
-		return fmt.Errorf("IDFiscaleIVA, (IdPaese): country id cannot exceed 2 characters, follow the ISO 3166-1 alpha-2 standard")
+		return fmt.Errorf("IDPaese %s", ErrorEgual(2))
 	}
 	return nil
 }

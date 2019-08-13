@@ -29,6 +29,7 @@ type datiGeneraliDocumento struct {
 	// al documento. Deve contenere almeno un carattere numerico.
 	// In caso contrario il file viene scartato con codice errore 00425.
 	Numero string `xml:"Numero" json:"Numero"`
+
 	// Campo che viene valorizzato in caso sia presente ritenuta.
 	DatiRitenuta           datiRitenuta           `xml:"DatiRitenuta" json:"DatiRitenuta"`
 	DatiBollo              datiBollo              `xml:"DatiBollo" json:"DatiBollo"`
@@ -61,39 +62,50 @@ func (f datiGeneraliDocumento) Validate() error {
 	if err = f.Data.Validate(); err != nil {
 		return fmt.Errorf("Data %s", err)
 	}
-	if err = f.DatiRitenuta.Validate(); err != nil {
-		return fmt.Errorf("DatiRitenuta %s", err)
+	if f.DatiCassaPrevidenziale != (datiCassaPrevidenziale{}) {
+		if err = f.DatiCassaPrevidenziale.Validate(); err != nil {
+			return fmt.Errorf("DatiCassaPrevidenziale %s", err)
+		}
+		if f.DatiCassaPrevidenziale.Ritenuta == "SI" {
+			if err = f.DatiRitenuta.Validate(); err != nil {
+				return fmt.Errorf("DatiRitenuta %s", err)
+			}
+		}
 	}
-	if err = f.DatiBollo.Validate(); err != nil {
-		return fmt.Errorf("DatiBollo %s", err)
+	if f.DatiBollo != (datiBollo{}) {
+		if err = f.DatiBollo.Validate(); err != nil {
+			return fmt.Errorf("DatiBollo %s", err)
+		}
 	}
-	if err = f.DatiCassaPrevidenziale.Validate(); err != nil {
-		return fmt.Errorf("DatiCassaPrevidenziale %s", err)
-	}
+
 	if err = f.ScontoMaggiorazione.Validate(); err != nil {
 		return fmt.Errorf("ScontoMaggiorazione %s", err)
 	}
-	if err = f.ImportoTotaleDocumento.Validate(); err != nil {
-		return fmt.Errorf("ImportoTotaleDocumento %s", err)
+	if f.ImportoTotaleDocumento != "" {
+		if err = f.ImportoTotaleDocumento.Validate(); err != nil {
+			return fmt.Errorf("ImportoTotaleDocumento %s", err)
+		}
 	}
-	if err = f.Arrotondamento.Validate(); err != nil {
-		return fmt.Errorf("Arrotondamento %s", err)
+	if f.Arrotondamento != "" {
+		if err = f.Arrotondamento.Validate(); err != nil {
+			return fmt.Errorf("Arrotondamento %s", err)
+		}
 	}
+
 	// Causale
 	// Art73
 	// Numero
 	if len(f.Numero) > 20 {
 		return fmt.Errorf("Numero %s", share.ErrorMaxLength(20))
 	}
-	if f.Art73 != "SI" {
+	if f.Art73 != "SI" && f.Art73 != "" {
 		return fmt.Errorf("Art73 %s", share.ErrorIncorrectValue(f.Art73))
 	}
-	n := 0
-	for _, val := range f.Causale {
-		n = n + len(val)
+	for index, val := range f.Causale {
+		if len(val) > 200 {
+			return fmt.Errorf("Casuale[%d] %s", index, share.ErrorMaxLength(200))
+		}
 	}
-	if n > 200 {
-		return fmt.Errorf("Casuale %s", share.ErrorMaxLength(200))
-	}
+
 	return err
 }
