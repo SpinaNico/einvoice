@@ -16,9 +16,9 @@ type IDFiscaleIVA struct {
 	// esempio: Australia 	-> 	AU
 	// esempio: Grece 		->	GR
 	// maggiori informazioni: [wikipedia](https://it.wikipedia.org/wiki/ISO_3166-1_alpha-2)
-	IDPaese string `xml:"IdPaese" json:"IdPaese"`
+	IDPaese string `xml:"IdPaese" json:"IdPaese" validate:"omitempty,len=2"`
 	// IDCodice : Lunghezza massima 28 caratteri alfanumerici.
-	IDCodice string `xml:"IdCodice" json:"IdCodice"`
+	IDCodice string `xml:"IdCodice" json:"IdCodice" validate:"omitempty,max=28"`
 }
 
 // Validate :

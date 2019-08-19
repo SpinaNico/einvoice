@@ -17,3 +17,7 @@ func regimeFiscaleValidator(rf validator.FieldLevel) bool {
 	//println(exists, RF)
 	return exists == true
 }
+
+func trasmissioneValidate(d validator.StructLevel) {
+
+}
