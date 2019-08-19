@@ -1,25 +1,21 @@
 package header
 
-import (
-	"fmt"
-)
-
 type contatti struct {
-	Telefono telefono `xml:"Telefono" json:"Telefono"`
+	Telefono string `xml:"Telefono" json:"Telefono" validate:"omitempty,min=5,max=12"`
 	//todo: Validate Fax
 	Fax   string `xml:"Fax" json:"Fax"`
-	Email email  `xml:"Email" json:"Email"`
+	Email string `xml:"Email" json:"Email" validate:"omitempty,email,max=255"`
 }
 
-func (c contatti) Validate() error {
-	var err error
+// func (c contatti) Validate() error {
+// 	var err error
 
-	if err = c.Email.Validate(); err != nil {
-		return fmt.Errorf("Email %s", err)
-	}
+// 	if err = c.Email.Validate(); err != nil {
+// 		return fmt.Errorf("Email %s", err)
+// 	}
 
-	if err = c.Telefono.Validate(); err != nil {
-		return fmt.Errorf("Telefono %s", err)
-	}
-	return nil
-}
+// 	if err = c.Telefono.Validate(); err != nil {
+// 		return fmt.Errorf("Telefono %s", err)
+// 	}
+// 	return nil
+// }

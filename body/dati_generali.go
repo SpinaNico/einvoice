@@ -4,7 +4,7 @@ import "fmt"
 
 type datiGenerali struct {
 	DatiGeneraliDocumento datiGeneraliDocumento `xml:"DatiGeneraliDocumento" json:"DatiGeneraliDocumento"`
-	DatiOrdineAcquisto    datiOrdineAcquisto    `xml:"DatiOrdineAcquisto" json:"DatiOrdineAcquisto"`
+	DatiOrdineAcquisto    datiOrdineAcquisto    `xml:"DatiOrdineAcquisto,omitempity" json:"DatiOrdineAcquisto"`
 	DatiContratto         datiContratto         `xml:"DatiContratto" json:"DatiContratto"`
 	DatiConvenzione       datiConvenzione       `xml:"DatiConvenzione" json:"DatiConvenzione"`
 	DatiRicezione         datiRicezione         `xml:"DatiRicezione" json:"DatiRicezione"`
@@ -25,6 +25,7 @@ func (f datiGenerali) Validate() error {
 	if err := f.DatiOrdineAcquisto.Validate(); err != nil {
 		return fmt.Errorf("DatiOrdineAcquisto %s", err)
 	}
+
 	if err := f.DatiContratto.Validate(); err != nil {
 		return fmt.Errorf("DatiContratto %s", err)
 	}

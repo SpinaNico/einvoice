@@ -18,23 +18,23 @@ func (f FatturaElettronicaBody) Validate() error {
 	var err error
 
 	if err = f.DatiGenerali.Validate(); err != nil {
-		return fmt.Errorf("FatturaElettronicaBody %s", err)
+		return fmt.Errorf("DatiGenerali %s", err)
 	}
 
 	if err = f.DatiBeniServizi.Validate(); err != nil {
-		return fmt.Errorf("FatturaElettronicaBody %s", err)
+		return fmt.Errorf("DatiBeniServizi %s", err)
 	}
 
 	if err = f.DatiVeicolo.Validate(); err != nil {
-		return fmt.Errorf("FatturaElettronicaBody %s", err)
+		return fmt.Errorf("DatiVeicolo %s", err)
 	}
 
 	if err = f.DatiPagamento.Validate(); err != nil {
-		return fmt.Errorf("FatturaElettronicaBody %s", err)
+		return fmt.Errorf("DatiPagamento %s", err)
 	}
 
 	if err = f.Allegati.Validate(); err != nil {
-		return fmt.Errorf("FatturaElettronicaBody %s", err)
+		return fmt.Errorf("Allegati %s", err)
 	}
 	return nil
 }

@@ -1,7 +1,6 @@
 package header
 
 import (
-	"fmt"
 	"github.com/SpinaNico/go-struct-invoice/share"
 )
 
@@ -10,11 +9,11 @@ type datiTrasmissione struct {
 	//ProgressivoInvio: progressivo che il soggetto trasmittente attribuisce
 	//al file che inoltra al Sistema di Interscambio per una propria finalità di
 	//identificazione univoca.
-	ProgressivoInvio progressivoInvio `xml:"ProgressivoInvio" json:"ProgressivoInvio"`
+	ProgressivoInvio string `xml:"ProgressivoInvio" json:"ProgressivoInvio" validate:"required,max=10"`
 	//FormatoTrasmissione: codice identificativo del tipo di trasmissione
 	//che si sta effettuando e del relativo formato. Va sempre valorizzato
 	//con “FPR12”.
-	FormatoTrasmissione formatoTrasmissione `xml:"FormatoTrasmissione" json:"FormatoTrasmissione"`
+	FormatoTrasmissione string `xml:"FormatoTrasmissione" json:"FormatoTrasmissione" validate:"required,oneof=FPR12 FPA12"`
 	//CodiceDestinatario: identifica il canale telematico sul quale
 	//recapitare la fattura; deve contenere un valore alfanumerico di 7
 	//caratteri corrispondente a:
@@ -31,46 +30,12 @@ type datiTrasmissione struct {
 	//- XXXXXXX’, in caso di fattura emessa verso soggetti non
 	//	residenti, non stabiliti, non identificati in Italia, e inviata al
 	//	Sistema di Interscambio al fine di trasmettere i dati.
-	CodiceDestinatario   codiceDestinatario   `xml:"CodiceDestinatario" json:"CodiceDestinatario"`
+	CodiceDestinatario   string               `xml:"CodiceDestinatario" json:"CodiceDestinatario" validate:"len=7"`
 	ContattiTrasmittente contattiTrasmittente `xml:"ContattiTrasmittente" json:"ContattiTrasmittente"`
 
 	//PECDestinatario: indirizzo di Posta Elettronica Certificata al quale, se
 	//valorizzato, viene recapitata la fattura nei casi in cui il valore di
 	//CodiceDestinatario sia uguale a ‘0000000’ e non risulti registrato alcun
 	//canale telematico associato alla partita IVA del cessionario/committente.
-	PECDestinatario pecDestinatario `xml:"PECDestinatario" json:"PECDestinatario"`
-}
-
-func (c datiTrasmissione) Validate() error {
-	var err error
-
-	if err = c.IDTrasmittente.Validate(); err != nil {
-		return fmt.Errorf("DatiTrasmissione %s", err)
-	}
-
-	if err = c.PECDestinatario.Validate(); err != nil {
-		return fmt.Errorf("DatiTrasmissione %s", err)
-	}
-
-	if err = c.ProgressivoInvio.Validate(); err != nil {
-		return fmt.Errorf("DatiTrasmissione %s", err)
-	}
-
-	if err = c.CodiceDestinatario.Validate(); err != nil {
-		return fmt.Errorf("DatiTrasmissione %s", err)
-	}
-
-	if err = c.FormatoTrasmissione.Validate(); err != nil {
-		return fmt.Errorf("DatiTrasmissione %s", err)
-	}
-
-	if err = c.ContattiTrasmittente.Validate(); err != nil {
-		return fmt.Errorf("DatiTrasmissione %s", err)
-	}
-
-	if len(string(c.PECDestinatario)) == 0 && string(c.CodiceDestinatario) == "0000000" {
-		return fmt.Errorf("DatiTrasmissione: You can't give me a Pec, with the recipient code \"0000000\" you have to give me a code, or the PEC")
-	}
-
-	return nil
+	PECDestinatario string `xml:"PECDestinatario" json:"PECDestinatario" validate:"omitempty,min=7,max=256"`
 }

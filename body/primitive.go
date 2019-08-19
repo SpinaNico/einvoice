@@ -14,8 +14,13 @@ type data string
 
 func (c data) Validate() error {
 	var err error
+
+	matched, _ := regexp.Match(`\d\d\d-\d\d-\d\d`, []byte(c))
+	if !matched {
+		return fmt.Errorf("%s", share.ErrorIncorrectValue(string(c)))
+	}
 	if len(string(c)) != 10 {
-		return fmt.Errorf("(Data) the format must be YYYY-MM-DD name of format: ISO 8601 2004 ")
+		return fmt.Errorf("the format must be YYYY-MM-DD name of format: ISO 8601 2004, actual(%s)", string(c))
 	}
 	return err
 }
