@@ -22,7 +22,10 @@ func (f FatturaElettronica) Validate() error {
 	var validate *validator.Validate
 	validate = validator.New()
 	validate.RegisterValidation("regimeValidate", regimeFiscaleValidator)
+	validate.RegisterValidation("isInteger", isInteger)
 	validate.RegisterStructValidation(datiTrasmissioneValidate, datiTrasmissione{})
+	validate.RegisterStructValidation(cessionarioCommittenteValidate, cessionarioCommittente{})
+	//validate.RegisterStructValidation(anagraficaValidate, anagrafica{})
 	if err := validate.Struct(f); err != nil {
 		return fmt.Errorf("FatturaElettronica %s", err)
 	}

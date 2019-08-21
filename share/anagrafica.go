@@ -37,15 +37,6 @@ func (a Anagrafica) Validate() error {
 	// if len(a.Cognome) > 60 {
 	// 	return fmt.Errorf("Anagrafica (Nome): %s", ErrorMaxLength(60))
 	// }
-	l := len(a.Titolo)
-	if !(l >= 2 && l <= 10) {
-		return fmt.Errorf("Anagrafica (Titolo) %s", ErrorIncluded(2, 10))
-	}
-
-	cl := len(a.CodEORI)
-	if !(cl >= 13 && cl <= 17) {
-		return fmt.Errorf("Anagrafica (CodEORI) %s", ErrorIncluded(13, 17))
-	}
 
 	if a.Denominazione != "" && (a.Nome != "" || a.Cognome != "") {
 		return fmt.Errorf("Anagrafica: you cannot write the field name surname if you have indicated a denomination")

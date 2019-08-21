@@ -1,13 +1,7 @@
 package invoice
 
-import (
-	"fmt"
-
-	share "github.com/SpinaNico/go-struct-invoice/share"
-)
-
 type datiTrasmissione struct {
-	IDTrasmittente share.IDFiscaleIVA `xml:"IdTrasmittente" json:"IdTrasmittente"`
+	IDTrasmittente iDFiscaleIVA `xml:"IdTrasmittente" json:"IdTrasmittente"`
 	//ProgressivoInvio: progressivo che il soggetto trasmittente attribuisce
 	//al file che inoltra al Sistema di Interscambio per una propria finalità di
 	//identificazione univoca.
@@ -40,14 +34,14 @@ type datiTrasmissione struct {
 	//valorizzato, viene recapitata la fattura nei casi in cui il valore di
 	//CodiceDestinatario sia uguale a ‘0000000’ e non risulti registrato alcun
 	//canale telematico associato alla partita IVA del cessionario/committente.
-	PECDestinatario string `xml:"PECDestinatario" json:"PECDestinatario" validate:"omitempty,min=7,max=256"`
+	PECDestinatario string `xml:"PECDestinatario" json:"PECDestinatario" validate:"omitempty,min=7,max=256,email"`
 }
 
 // Trovi descrizioni nella sezione 2.2.4.1 Dati Anagrafici
 type datiAnagrafici struct {
-	CodiceFiscale string             `xml:"CodiceFiscale" json:"CodiceFiscale" validate:"omitempty,min=11,max=16"`
-	Anagrafica    share.Anagrafica   `xml:"Anagrafica" json:"Anagrafica"`
-	IDFiscaleIVA  share.IDFiscaleIVA `xml:"IdFiscaleIVA" json:"IdFiscaleIVA"`
+	CodiceFiscale string       `xml:"CodiceFiscale" json:"CodiceFiscale" validate:"omitempty,min=11,max=16"`
+	Anagrafica    anagrafica   `xml:"Anagrafica" json:"Anagrafica"`
+	IDFiscaleIVA  iDFiscaleIVA `xml:"IdFiscaleIVA" json:"IdFiscaleIVA"`
 
 	// AlboProfessionale: formato alfanumerico; lunghezza massima di 60 caratteri.
 	AlboProfessionale string `xml:"AlboProfessionale" json:"AlboProfessionale" validate:"omitempty,max=60"`
@@ -93,9 +87,9 @@ type contattiTrasmittente struct {
 }
 
 type cedentePrestatore struct {
-	DatiAnagrafici datiAnagrafici      `xml:"DatiAnagrafici" json:"DatiAnagrafici"`
-	Sede           share.IndirizzoType `xml:"Sede" json:"Sede"`
-	Contatti       contatti            `xml:"Contatti" json:"Contatti"`
+	DatiAnagrafici datiAnagrafici `xml:"DatiAnagrafici" json:"DatiAnagrafici"`
+	Sede           indirizzoType  `xml:"Sede" json:"Sede"`
+	Contatti       contatti       `xml:"Contatti" json:"Contatti"`
 }
 
 //TODO:
@@ -103,77 +97,24 @@ type cedentePrestatore struct {
 //valorizzare i blocchi: StabileOrganizzazione, RappresentanteFiscale
 
 type cessionarioCommittente struct {
-	DatiAnagrafici datiAnagrafici      `xml:"DatiAnagrafici" json:"DatiAnagrafici"`
-	Sede           share.IndirizzoType `xml:"Sede" json:"Sede"`
+	DatiAnagrafici datiAnagrafici `xml:"DatiAnagrafici" json:"DatiAnagrafici"`
+	Sede           indirizzoType  `xml:"Sede" json:"Sede"`
 	// Da valorizzare solo se il cessionario non è un residente
 	// quindi per l'operazione deve obbligatoriamente indicare uno stabile
 	// in questa struttura deve indicare lo stabile (che risiede nel territorio italiano)
-	StabileOrganizzazione share.IndirizzoType   `xml:"StabileOrganizzazione" json:"StabileOrganizzazione"`
+	StabileOrganizzazione indirizzoType         `xml:"StabileOrganizzazione" json:"StabileOrganizzazione" validate:"structonly"`
 	RappresentanteFiscale rappresentanteFiscale `xml:"RappresentanteFiscale" json:"RappresentanteFiscale"`
 }
 
-func (c cessionarioCommittente) Validate() error {
-	var err error
-	err = c.Sede.Validate()
-	if err != nil {
-		return fmt.Errorf("CessionarioCommittente %s", err)
-	}
-	if c.Sede.Nazione != "IT" {
-		err = c.StabileOrganizzazione.Validate()
-		if err != nil {
-			return fmt.Errorf("CessionarioCommittente \"StabileOrganizzazione\" is type %s", err)
-		}
-		err = c.RappresentanteFiscale.Validate()
-		if err != nil {
-			return fmt.Errorf("CessionarioCommittente %s", err)
-		}
-	}
-	// todo: Se è italiana la presenza eventualmente di
-	// RappresentanteFiscale | StabileOrganizzazione
-	// produce un errore ?
-	return nil
-}
-
 type rappresentanteFiscale struct {
-	share.Anagrafica
-	IDFiscaleIva share.IDFiscaleIVA `xml:"IdFiscaleIVA" json:"IdFiscaleIVA"`
+	anagrafica
+	IDFiscaleIva iDFiscaleIVA `xml:"IdFiscaleIVA" json:"IdFiscaleIVA"`
 }
 type terzoIntermediarioOSoggettoEmittente struct {
-	IDFiscaleIVA  share.IDFiscaleIVA `xml:"IdFiscaleIVA" json:"IdFiscaleIVA"`
-	CodiceFiscale string             ` xml:"CodiceFiscale" json:"CodiceFiscale"`
-	Anagrafica    share.Anagrafica   `xml:"Anagrafica" json:"Anagrafica"`
+	IDFiscaleIVA  iDFiscaleIVA `xml:"IdFiscaleIVA" json:"IdFiscaleIVA"`
+	CodiceFiscale string       ` xml:"CodiceFiscale" json:"CodiceFiscale" validate:"omitempty,min=11,max=16"`
+	Anagrafica    anagrafica   `xml:"Anagrafica" json:"Anagrafica"`
 }
-
-// func (a rappresentanteFiscale) Validate() error {
-// 	var err error
-// 	err = a.IDFiscaleIva.Validate()
-// 	if err != nil {
-// 		return fmt.Errorf("RappresentanteFiscale %s", err)
-// 	}
-// 	if len(a.Denominazione) > 80 {
-// 		return fmt.Errorf("RappresentanteFiscale (Denominazione): %s", share.ErrorMaxLength(80))
-// 	}
-// 	if len(a.Nome) > 60 {
-// 		return fmt.Errorf("RappresentanteFiscale (Nome): %s", share.ErrorMaxLength(60))
-// 	}
-// 	if len(a.Cognome) > 60 {
-// 		return fmt.Errorf("RappresentanteFiscale (Nome): %s", share.ErrorMaxLength(60))
-// 	}
-// 	l := len(a.Titolo)
-// 	if !(l >= 2 && l <= 10) {
-// 		return fmt.Errorf("RappresentanteFiscale (Titolo) %s", share.ErrorIncluded(2, 10))
-// 	}
-
-// 	cl := len(a.CodEORI)
-// 	if !(cl >= 13 && cl <= 17) {
-// 		return fmt.Errorf("RappresentanteFiscale (CodEORI) %s", share.ErrorIncluded(13, 17))
-// 	}
-
-// 	if a.Denominazione != "" && (a.Nome != "" || a.Cognome != "") {
-// 		return fmt.Errorf("RappresentanteFiscale: you cannot write the field name surname if you have indicated a denomination")
-// 	}
-// 	return nil
-// }
 
 //FatturaElettronicaHeader :
 type FatturaElettronicaHeader struct {
