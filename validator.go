@@ -18,6 +18,12 @@ func regimeFiscaleValidator(rf validator.FieldLevel) bool {
 	return exists == true
 }
 
-func trasmissioneValidate(d validator.StructLevel) {
+func datiTrasmissioneValidate(d validator.StructLevel) {
+	data := d.Current().Interface().(datiTrasmissione)
+	if data.CodiceDestinatario == "0000000" {
+		if data.PECDestinatario == "" {
+			d.ReportError(data.PECDestinatario, "PECDestinatario", "", "required", "")
+		}
+	}
 
 }

@@ -178,7 +178,7 @@ type terzoIntermediarioOSoggettoEmittente struct {
 //FatturaElettronicaHeader :
 type FatturaElettronicaHeader struct {
 	/// NO DOC
-	DatiTrasmissione datiTrasmissione `xml:"DatiTrasmissione" json:"DatiTrasmissione" validate:"datiTrasmissioneValidate"`
+	DatiTrasmissione datiTrasmissione `xml:"DatiTrasmissione" json:"DatiTrasmissione"`
 	/// NO DOC
 	CedentePrestatore cedentePrestatore `xml:"CedentePrestatore" json:"CedentePrestatore"`
 	/// NO DOC
