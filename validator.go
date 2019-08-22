@@ -8,6 +8,17 @@ import (
 	"gopkg.in/go-playground/validator.v9"
 )
 
+func getValidator() *validator.Validate {
+	var validate *validator.Validate
+	validate = validator.New()
+	validate.RegisterValidation("regimeValidate", regimeFiscaleValidator)
+	validate.RegisterValidation("isInteger", isInteger)
+	validate.RegisterValidation("idData", isDate)
+	validate.RegisterStructValidation(datiTrasmissioneValidate, datiTrasmissione{})
+	validate.RegisterStructValidation(cessionarioCommittenteValidate, cessionarioCommittente{})
+	return validate
+}
+
 func regimeFiscaleValidator(rf validator.FieldLevel) bool {
 	RF := rf.Field().String()
 

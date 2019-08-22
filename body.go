@@ -1,5 +1,7 @@
 package invoice
 
+import "fmt"
+
 type allegati struct {
 	NomeAttachment        string `xml:"NomeAttachment" json:"NomeAttachment" validate:"max=60"`
 	AlgoritmoCompressione string `xml:"AlgoritmoCompressione" json:"AlgoritmoCompressione" validate:"max=10"`
@@ -128,7 +130,7 @@ type datiSAL struct {
 type datiTrasporto struct {
 	DatiAnagraficiVettore datiAnagraficiVettore `xml:"DatiAnagraficiVettore" json:"DatiAnagraficiVettore"`
 	MezzoTrasporto        string                `xml:"MezzoTrasporto" json:"MezzoTrasporto" validate:"max=80"`
-	CausaleTrasporto      string                `xml:"CausaleTrasporto" json:"CausaleTrasporto" validate:""max=100`
+	CausaleTrasporto      string                `xml:"CausaleTrasporto" json:"CausaleTrasporto" validate:"max=100"`
 	NumeroColli           int                   `xml:"NumeroColli" json:"NumeroColli" validate:"max=9999,min=0"`
 	Descrizione           string                `xml:"Descrizione" json:"Descrizione" validate:"max=100"`
 	UnitaMisuraPeso       string                `xml:"UnitaMisuraPeso" json:"UnitaMisuraPeso" validate:"max=10"`
@@ -189,15 +191,6 @@ type dettaglioPagamento struct {
 	CodicePagamento                 string `xml:"CodicePagamento" json:"CodicePagamento" validate:"max=60"`
 }
 
-//FatturaElettronicaBody corpo della fattura
-type FatturaElettronicaBody struct {
-	DatiGenerali    datiGenerali    `xml:"DatiGenerali" json:"DatiGenerali"`
-	DatiBeniServizi datiBeniServizi `xml:"DatiBeniServizi" json:"DatiBeniServizi"`
-	DatiVeicolo     datiVeicolo     `xml:"DatiVeicolo" json:"DatiVeicolo"`
-	DatiPagamento   datiPagamento   `xml:"DatiPagamento" json:"DatiPagamento"`
-	Allegati        allegati        `xml:"Allegati" json:"Allegati"`
-}
-
 type fatturaPrincipale struct {
 	NumeroFatturaPrincipale string `xml:"NumeroFatturaPrincipale" json:"NumeroFatturaPrincipale" validate:"max=20"`
 	DataFatturaPrincipale   string `xml:"DataFatturaPrincipale" json:"DataFatturaPrincipale" validate:"isDate"`
@@ -207,4 +200,22 @@ type scontoMaggiorazione struct {
 	Tipo        string  `xml:"Tipo" json:"Tipo"`
 	Percentuale float32 `xml:"Percentuale" json:"Percentuale"`
 	Importo     float32 `xml:"Importo" json:"Importo"`
+}
+
+//FatturaElettronicaBody represents the body of an electronic invoice in all its parts
+type FatturaElettronicaBody struct {
+	DatiGenerali    datiGenerali    `xml:"DatiGenerali" json:"DatiGenerali"`
+	DatiBeniServizi datiBeniServizi `xml:"DatiBeniServizi" json:"DatiBeniServizi"`
+	DatiVeicolo     datiVeicolo     `xml:"DatiVeicolo" json:"DatiVeicolo"`
+	DatiPagamento   datiPagamento   `xml:"DatiPagamento" json:"DatiPagamento"`
+	Allegati        allegati        `xml:"Allegati" json:"Allegati"`
+}
+
+// Validate Valid the body of the invoice Italian Electronics
+func (v FatturaElettronicaBody) Validate() error {
+	validate := getValidator()
+	if err := validate.Struct(v); err != nil {
+		return fmt.Errorf("FatturaElettronicaBody %s", err)
+	}
+	return nil
 }

@@ -1,45 +1,29 @@
 package invoice
 
-import (
-	"fmt"
+import "fmt"
 
-	validator "gopkg.in/go-playground/validator.v9"
-)
-
-// FatturaElettronica Fattura elettronica
+// FatturaElettronica The structure of a multi body electronic invoice, if you need only one body,
+//just insert a single element in the FatturaElettronicaBod slice...
 type FatturaElettronica struct {
 	FatturaElettronicaHeader FatturaElettronicaHeader `xml:"FatturaElettronicaHeader" json:"FatturaElettronicaHeader"`
 	FatturaElettronicaBody   []FatturaElettronicaBody `xml:"FatturaElettronicaBody" json:"FatturaElettronicaBody"`
 	// ds:Signature todo: firma digitale da implementare
 }
 
-// Version : print in Std out reference versione invoice.
-func (f FatturaElettronica) Version() { println("invoice version 1.2") }
+// Version The reference version of the electronic invoice returns
+func (f FatturaElettronica) Version() string { return "1.2" }
 
-// Validate :
+// Validate : Valid all the structure in each part, header and all the
+// bodies present, if an error exists it is reported In the case of an error within the invoice body slice.
+// This method returns an error indicating the index of the error in square brackets
 func (f FatturaElettronica) Validate() error {
-	var validate *validator.Validate
-	validate = validator.New()
-	validate.RegisterValidation("regimeValidate", regimeFiscaleValidator)
-	validate.RegisterValidation("isInteger", isInteger)
-	validate.RegisterValidation("idData", isDate)
-	validate.RegisterStructValidation(datiTrasmissioneValidate, datiTrasmissione{})
-	validate.RegisterStructValidation(cessionarioCommittenteValidate, cessionarioCommittente{})
-	//validate.RegisterStructValidation(anagraficaValidate, anagrafica{})
-	if err := validate.Struct(f); err != nil {
-		return fmt.Errorf("FatturaElettronica %s", err)
+	if err := f.FatturaElettronicaHeader.Validate(); err != nil {
+		return err
 	}
-
-	// var err error
-	// for index, i := range f.FatturaElettronicaBody {
-
-	// 	if err = i.Validate(); err != nil {
-	// 		return fmt.Errorf("FatturaElettronica body:(%d) %s", index+1, err)
-	// 	}
-	// }
-
-	// if err = f.FatturaElettronicaHeader.Validate(); err != nil {
-	// 	return fmt.Errorf("FatturaElettronica %s", err)
-	// }
+	for index, value := range f.FatturaElettronicaBody {
+		if err := value.Validate(); err != nil {
+			return fmt.Errorf("[%d] %s", index+1, err)
+		}
+	}
 	return nil
 }

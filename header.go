@@ -1,5 +1,7 @@
 package invoice
 
+import "fmt"
+
 type datiTrasmissione struct {
 	IDTrasmittente iDFiscaleIVA `xml:"IdTrasmittente" json:"IdTrasmittente"`
 	//ProgressivoInvio: progressivo che il soggetto trasmittente attribuisce
@@ -116,25 +118,21 @@ type terzoIntermediarioOSoggettoEmittente struct {
 	Anagrafica    anagrafica   `xml:"Anagrafica" json:"Anagrafica"`
 }
 
-//FatturaElettronicaHeader :
+//FatturaElettronicaHeader A tree of structures that represents the Header of an Italian electronic bill
 type FatturaElettronicaHeader struct {
-	/// NO DOC
-	DatiTrasmissione datiTrasmissione `xml:"DatiTrasmissione" json:"DatiTrasmissione"`
-	/// NO DOC
-	CedentePrestatore cedentePrestatore `xml:"CedentePrestatore" json:"CedentePrestatore"`
-	/// NO DOC
-	RappresentanteFiscale rappresentanteFiscale `xml:"RappresentanteFiscale" json:"RappresentanteFiscale" validate:"omitempty"`
-	/// NO DOC
-	CessionarioCommittente cessionarioCommittente `xml:"CessionarioCommittente" json:"CessionarioCommittente"`
-
-	/// NO DOC
+	DatiTrasmissione                     datiTrasmissione                     `xml:"DatiTrasmissione" json:"DatiTrasmissione"`
+	CedentePrestatore                    cedentePrestatore                    `xml:"CedentePrestatore" json:"CedentePrestatore"`
+	RappresentanteFiscale                rappresentanteFiscale                `xml:"RappresentanteFiscale" json:"RappresentanteFiscale" validate:"omitempty"`
+	CessionarioCommittente               cessionarioCommittente               `xml:"CessionarioCommittente" json:"CessionarioCommittente"`
 	TerzoIntermediarioOSoggettoEmittente terzoIntermediarioOSoggettoEmittente `xml:"TerzoIntermediarioOSoggettoEmittente" json:"TerzoIntermediarioOSoggettoEmittente" validate:"omitempty"`
+	SoggettoEmittente                    string                               `xml:"SoggettoEmittente" json:"SoggettoEmittente" validate:"omitempty,len=2,oneof=CC CZ"`
+}
 
-	// Nei casi di documenti emessi da un soggetto diverso dal cedente/prestatore va
-	// valorizzato l’elemento seguente.
-	// SoggettoEmittente: codice che sta ad indicare se la fattura è stata
-	// emessa da parte del cessionario/committente ovvero da parte di un
-	// terzo per conto del cedente/prestatore.
-	// può assumere il Valore: "CC" o "TZ"
-	SoggettoEmittente string `xml:"SoggettoEmittente" json:"SoggettoEmittente" validate:"omitempty,len=2,oneof=CC CZ"`
+// Validate Check the correctness of the header according to Italian SDi
+func (v FatturaElettronicaHeader) Validate() error {
+	validate := getValidator()
+	if err := validate.Struct(v); err != nil {
+		return fmt.Errorf("FatturaElettronicaHeader %s", err)
+	}
+	return nil
 }
