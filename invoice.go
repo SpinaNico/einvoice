@@ -3,14 +3,13 @@ package invoice
 import (
 	"fmt"
 
-	body "github.com/SpinaNico/go-struct-invoice/body"
 	validator "gopkg.in/go-playground/validator.v9"
 )
 
 // FatturaElettronica Fattura elettronica
 type FatturaElettronica struct {
-	FatturaElettronicaHeader FatturaElettronicaHeader      `xml:"FatturaElettronicaHeader" json:"FatturaElettronicaHeader"`
-	FatturaElettronicaBody   []body.FatturaElettronicaBody `xml:"FatturaElettronicaBody" json:"FatturaElettronicaBody"`
+	FatturaElettronicaHeader FatturaElettronicaHeader `xml:"FatturaElettronicaHeader" json:"FatturaElettronicaHeader"`
+	FatturaElettronicaBody   []FatturaElettronicaBody `xml:"FatturaElettronicaBody" json:"FatturaElettronicaBody"`
 	// ds:Signature todo: firma digitale da implementare
 }
 
@@ -23,6 +22,7 @@ func (f FatturaElettronica) Validate() error {
 	validate = validator.New()
 	validate.RegisterValidation("regimeValidate", regimeFiscaleValidator)
 	validate.RegisterValidation("isInteger", isInteger)
+	validate.RegisterValidation("idData", isDate)
 	validate.RegisterStructValidation(datiTrasmissioneValidate, datiTrasmissione{})
 	validate.RegisterStructValidation(cessionarioCommittenteValidate, cessionarioCommittente{})
 	//validate.RegisterStructValidation(anagraficaValidate, anagrafica{})

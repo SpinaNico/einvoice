@@ -2,6 +2,7 @@ package invoice
 
 import (
 	"fmt"
+	"regexp"
 	"strconv"
 
 	"gopkg.in/go-playground/validator.v9"
@@ -58,6 +59,50 @@ func cessionarioCommittenteValidate(d validator.StructLevel) {
 	}
 }
 
+// control is is a price number 0.00
 func isPrice(d validator.FieldLevel) bool {
-	return false
+	s := d.Field().String()
+	val, err := strconv.ParseFloat(s, 32)
+	if err != nil {
+		return false
+	}
+	stringVersion := fmt.Sprintf("%.2f", val)
+	if s != stringVersion {
+		return false
+	}
+	return true
+}
+
+//is Data format: YYYY-MM-DD.
+func isDate(field validator.FieldLevel) bool {
+	data := field.Field().String()
+	matched, _ := regexp.Match(`\d\d\d-\d\d-\d\d`, []byte(data))
+	if !matched {
+		return false
+	}
+	if len(data) != 10 {
+		return false
+	}
+
+	return true
+}
+
+// validate format: YYYY-MM- DDTHH:MM:SS.
+func isDateTime(field validator.FieldLevel) bool {
+	return true
+}
+
+func isNatura(field validator.FieldLevel) bool {
+	c := field.Field().String()
+	if len(string(c)) != 2 {
+		return false // return fmt. f("Natura %s", share. Egual(2))
+	}
+	values := make(map[string]string)
+	for i := 1; i < 8; i++ {
+		values[fmt.Sprintf("N%d", i)] = "true"
+	}
+	if _, ok := values[string(c)]; ok == false {
+		return false
+	}
+	return true
 }
