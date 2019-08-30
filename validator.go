@@ -13,7 +13,10 @@ func getValidator() *validator.Validate {
 	validate = validator.New()
 	validate.RegisterValidation("regimeValidate", regimeFiscaleValidator)
 	validate.RegisterValidation("isInteger", isInteger)
-	validate.RegisterValidation("idData", isDate)
+	validate.RegisterValidation("isDate", isDate)
+	validate.RegisterValidation("isPrice", isPrice)
+	validate.RegisterValidation("isNatura", isNatura)
+	validate.RegisterValidation("isDateTime", isDateTime)
 	validate.RegisterStructValidation(datiTrasmissioneValidate, datiTrasmissione{})
 	validate.RegisterStructValidation(cessionarioCommittenteValidate, cessionarioCommittente{})
 	return validate

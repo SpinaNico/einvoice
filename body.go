@@ -118,7 +118,7 @@ type datiRiepilogo struct {
 
 type datiRitenuta struct {
 	TipoRitenuta     string `xml:"TipoRitenuta" json:"TipoRitenuta" validate:"oneof=RT01 RT02"`
-	ImportoRitenuta  string `xml:"ImportoRitenuta" json:"ImportoRitenuta" validate:"isPrice,min=4,max15"`
+	ImportoRitenuta  string `xml:"ImportoRitenuta" json:"ImportoRitenuta" validate:"isPrice,min=4,max=15"`
 	AliquotaRitenuta string `xml:"AliquotaRitenuta" json:"AliquotaRitenuta" validate:"isPrice,min=4,max=6"`
 	CausalePagamento string `xml:"CausalePagamento" json:"CausalePagamento" validate:"oneof=CU ZO M2"`
 }
