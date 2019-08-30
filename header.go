@@ -3,7 +3,7 @@ package invoice
 import "fmt"
 
 type datiTrasmissione struct {
-	IDTrasmittente iDFiscaleIVA `xml:"IdTrasmittente" json:"IdTrasmittente"`
+	IDTrasmittente *iDFiscaleIVA `xml:"IdTrasmittente" json:"IdTrasmittente"`
 	//ProgressivoInvio: progressivo che il soggetto trasmittente attribuisce
 	//al file che inoltra al Sistema di Interscambio per una propria finalità di
 	//identificazione univoca.
@@ -29,8 +29,8 @@ type datiTrasmissione struct {
 	//- XXXXXXX’, in caso di fattura emessa verso soggetti non
 	//	residenti, non stabiliti, non identificati in Italia, e inviata al
 	//	Sistema di Interscambio al fine di trasmettere i dati.
-	CodiceDestinatario   string               `xml:"CodiceDestinatario" json:"CodiceDestinatario" validate:"len=7"`
-	ContattiTrasmittente contattiTrasmittente `xml:"ContattiTrasmittente" json:"ContattiTrasmittente"`
+	CodiceDestinatario   string                `xml:"CodiceDestinatario" json:"CodiceDestinatario" validate:"len=7"`
+	ContattiTrasmittente *contattiTrasmittente `xml:"ContattiTrasmittente" json:"ContattiTrasmittente"`
 
 	//PECDestinatario: indirizzo di Posta Elettronica Certificata al quale, se
 	//valorizzato, viene recapitata la fattura nei casi in cui il valore di
@@ -41,9 +41,9 @@ type datiTrasmissione struct {
 
 // Trovi descrizioni nella sezione 2.2.4.1 Dati Anagrafici
 type datiAnagrafici struct {
-	CodiceFiscale string       `xml:"CodiceFiscale" json:"CodiceFiscale" validate:"omitempty,min=11,max=16"`
-	Anagrafica    anagrafica   `xml:"Anagrafica" json:"Anagrafica"`
-	IDFiscaleIVA  iDFiscaleIVA `xml:"IdFiscaleIVA" json:"IdFiscaleIVA"`
+	CodiceFiscale string        `xml:"CodiceFiscale" json:"CodiceFiscale" validate:"omitempty,min=11,max=16"`
+	Anagrafica    *anagrafica   `xml:"Anagrafica" json:"Anagrafica"`
+	IDFiscaleIVA  *iDFiscaleIVA `xml:"IdFiscaleIVA" json:"IdFiscaleIVA"`
 
 	// AlboProfessionale: formato alfanumerico; lunghezza massima di 60 caratteri.
 	AlboProfessionale string `xml:"AlboProfessionale" json:"AlboProfessionale" validate:"omitempty,max=60"`
@@ -89,9 +89,9 @@ type contattiTrasmittente struct {
 }
 
 type cedentePrestatore struct {
-	DatiAnagrafici datiAnagrafici `xml:"DatiAnagrafici" json:"DatiAnagrafici"`
-	Sede           indirizzoType  `xml:"Sede" json:"Sede"`
-	Contatti       contatti       `xml:"Contatti" json:"Contatti"`
+	DatiAnagrafici *datiAnagrafici `xml:"DatiAnagrafici" json:"DatiAnagrafici"`
+	Sede           *indirizzoType  `xml:"Sede" json:"Sede"`
+	Contatti       *contatti       `xml:"Contatti" json:"Contatti"`
 }
 
 //TODO:
@@ -99,33 +99,33 @@ type cedentePrestatore struct {
 //valorizzare i blocchi: StabileOrganizzazione, RappresentanteFiscale
 
 type cessionarioCommittente struct {
-	DatiAnagrafici datiAnagrafici `xml:"DatiAnagrafici" json:"DatiAnagrafici"`
-	Sede           indirizzoType  `xml:"Sede" json:"Sede"`
+	DatiAnagrafici *datiAnagrafici `xml:"DatiAnagrafici" json:"DatiAnagrafici"`
+	Sede           *indirizzoType  `xml:"Sede" json:"Sede"`
 	// Da valorizzare solo se il cessionario non è un residente
 	// quindi per l'operazione deve obbligatoriamente indicare uno stabile
 	// in questa struttura deve indicare lo stabile (che risiede nel territorio italiano)
-	StabileOrganizzazione indirizzoType         `xml:"StabileOrganizzazione" json:"StabileOrganizzazione" validate:"structonly"`
-	RappresentanteFiscale rappresentanteFiscale `xml:"RappresentanteFiscale" json:"RappresentanteFiscale"`
+	StabileOrganizzazione *indirizzoType         `xml:"StabileOrganizzazione" json:"StabileOrganizzazione"`
+	RappresentanteFiscale *rappresentanteFiscale `xml:"RappresentanteFiscale" json:"RappresentanteFiscale"`
 }
 
 type rappresentanteFiscale struct {
 	anagrafica
-	IDFiscaleIva iDFiscaleIVA `xml:"IdFiscaleIVA" json:"IdFiscaleIVA"`
+	IDFiscaleIva *iDFiscaleIVA `xml:"IdFiscaleIVA" json:"IdFiscaleIVA"`
 }
 type terzoIntermediarioOSoggettoEmittente struct {
-	IDFiscaleIVA  iDFiscaleIVA `xml:"IdFiscaleIVA" json:"IdFiscaleIVA"`
-	CodiceFiscale string       ` xml:"CodiceFiscale" json:"CodiceFiscale" validate:"omitempty,min=11,max=16"`
-	Anagrafica    anagrafica   `xml:"Anagrafica" json:"Anagrafica"`
+	IDFiscaleIVA  *iDFiscaleIVA `xml:"IdFiscaleIVA" json:"IdFiscaleIVA"`
+	CodiceFiscale string        ` xml:"CodiceFiscale" json:"CodiceFiscale" validate:"omitempty,min=11,max=16"`
+	Anagrafica    *anagrafica   `xml:"Anagrafica" json:"Anagrafica"`
 }
 
 //FatturaElettronicaHeader A tree of structures that represents the Header of an Italian electronic bill
 type FatturaElettronicaHeader struct {
-	DatiTrasmissione                     datiTrasmissione                     `xml:"DatiTrasmissione" json:"DatiTrasmissione"`
-	CedentePrestatore                    cedentePrestatore                    `xml:"CedentePrestatore" json:"CedentePrestatore"`
-	RappresentanteFiscale                rappresentanteFiscale                `xml:"RappresentanteFiscale" json:"RappresentanteFiscale" validate:"omitempty"`
-	CessionarioCommittente               cessionarioCommittente               `xml:"CessionarioCommittente" json:"CessionarioCommittente"`
-	TerzoIntermediarioOSoggettoEmittente terzoIntermediarioOSoggettoEmittente `xml:"TerzoIntermediarioOSoggettoEmittente" json:"TerzoIntermediarioOSoggettoEmittente" validate:"omitempty"`
-	SoggettoEmittente                    string                               `xml:"SoggettoEmittente" json:"SoggettoEmittente" validate:"omitempty,len=2,oneof=CC CZ"`
+	DatiTrasmissione                     *datiTrasmissione                     `xml:"DatiTrasmissione" json:"DatiTrasmissione"`
+	CedentePrestatore                    *cedentePrestatore                    `xml:"CedentePrestatore" json:"CedentePrestatore"`
+	RappresentanteFiscale                *rappresentanteFiscale                `xml:"RappresentanteFiscale" json:"RappresentanteFiscale" validate:"omitempty"`
+	CessionarioCommittente               *cessionarioCommittente               `xml:"CessionarioCommittente" json:"CessionarioCommittente"`
+	TerzoIntermediarioOSoggettoEmittente *terzoIntermediarioOSoggettoEmittente `xml:"TerzoIntermediarioOSoggettoEmittente" json:"TerzoIntermediarioOSoggettoEmittente" validate:"omitempty"`
+	SoggettoEmittente                    string                                `xml:"SoggettoEmittente" json:"SoggettoEmittente" validate:"omitempty,len=2,oneof=CC CZ"`
 }
 
 // Validate Check the correctness of the header according to Italian SDi

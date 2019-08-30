@@ -27,7 +27,7 @@ func regimeFiscaleValidator(rf validator.FieldLevel) bool {
 
 	regimeFiscale := make(map[string]string)
 	for i := 1; i < 20; i++ {
-		regimeFiscale[fmt.Sprintf("RF%d", i)] = "true"
+		regimeFiscale[fmt.Sprintf("RF%02d", i)] = "true"
 	}
 	_, exists := regimeFiscale[string(RF)]
 	//println(exists, RF)
@@ -41,6 +41,23 @@ func isInteger(t validator.FieldLevel) bool {
 		return false
 	}
 	return true
+}
+
+//Check the data hold block, which must be filled in case of DatiCassaPrevidenziale.Ritenuta == "SI"
+func checkDatiRitenuta(d validator.StructLevel) {
+	data := d.Current().Interface().(datiGeneraliDocumento)
+	if data.DatiCassaPrevidenziale.Ritenuta == "SI" {
+		if *data.DatiRitenuta == (datiRitenuta{}) {
+			d.ReportError(data.DatiRitenuta, "struct", "all", "required", "")
+		} else {
+			validate := getValidator()
+			if err := validate.Struct(data.DatiRitenuta); err != nil {
+				d.ReportError("DatiRitenuta", "", fmt.Sprintf("%s", err), "", "")
+			}
+
+		}
+	}
+
 }
 
 // Struct Level control
@@ -62,7 +79,7 @@ func datiTrasmissioneValidate(d validator.StructLevel) {
 func cessionarioCommittenteValidate(d validator.StructLevel) {
 	data := d.Current().Interface().(cessionarioCommittente)
 	if data.Sede.Nazione != "IT" {
-		if data.StabileOrganizzazione == (indirizzoType{}) {
+		if *data.StabileOrganizzazione == (indirizzoType{}) {
 			d.ReportError(data.StabileOrganizzazione, "StabileOrganizzazione", "", "required", "")
 		} else {
 			if data.StabileOrganizzazione.Nazione != "IT" {
