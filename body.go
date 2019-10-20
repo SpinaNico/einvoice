@@ -74,7 +74,7 @@ type datiGeneraliDocumento struct {
 	Divisa                 string                  `xml:"Divisa" json:"Divisa" validate:"len=3"`
 	Data                   string                  `xml:"Data" json:"Data" validate:"isDate"`
 	Numero                 string                  `xml:"Numero" json:"Numero"`
-	DatiRitenuta           *datiRitenuta           `xml:"DatiRitenuta,omitempty" json:"DatiRitenuta,omitempty"`
+	DatiRitenuta           *datiRitenuta           `xml:"DatiRitenuta,omitempty" json:"DatiRitenuta,omitempty" validate:"omitempty"`
 	DatiBollo              *datiBollo              `xml:"DatiBollo" json:"DatiBollo" validate:"omitempty"`
 	DatiCassaPrevidenziale *datiCassaPrevidenziale `xml:"DatiCassaPrevidenziale" json:"DatiCassaPrevidenziale" `
 	ScontoMaggiorazione    *scontoMaggiorazione    `xml:"ScontoMaggiorazione" json:"ScontoMaggiorazione" `
