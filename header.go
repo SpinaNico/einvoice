@@ -3,7 +3,7 @@ package invoice
 import "fmt"
 
 type datiTrasmissione struct {
-	IDTrasmittente *iDFiscaleIVA `xml:"IdTrasmittente" json:"IdTrasmittente"`
+	IDTrasmittente *iDFiscaleIVA `xml:"IdTrasmittente" json:"IdTrasmittente" validate:"required"`
 	//ProgressivoInvio: progressivo che il soggetto trasmittente attribuisce
 	//al file che inoltra al Sistema di Interscambio per una propria finalità di
 	//identificazione univoca.
@@ -29,7 +29,9 @@ type datiTrasmissione struct {
 	//- XXXXXXX’, in caso di fattura emessa verso soggetti non
 	//	residenti, non stabiliti, non identificati in Italia, e inviata al
 	//	Sistema di Interscambio al fine di trasmettere i dati.
-	CodiceDestinatario   string                `xml:"CodiceDestinatario" json:"CodiceDestinatario" validate:"len=7"`
+	// - L'amministrazione publica ha il codice univoco di soli  6 caratteri
+	//   corrisponde al numero di ufficio
+	CodiceDestinatario   string                `xml:"CodiceDestinatario" json:"CodiceDestinatario" validate:"min=6,max=7"`
 	ContattiTrasmittente *contattiTrasmittente `xml:"ContattiTrasmittente" json:"ContattiTrasmittente"`
 
 	//PECDestinatario: indirizzo di Posta Elettronica Certificata al quale, se

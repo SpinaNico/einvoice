@@ -9,8 +9,8 @@ type anagrafica struct {
 }
 
 type iDFiscaleIVA struct {
-	IDPaese  string `xml:"IdPaese" json:"IdPaese" validate:"omitempty,len=2"`
-	IDCodice string `xml:"IdCodice" json:"IdCodice" validate:"omitempty,max=28"`
+	IDPaese  string `xml:"IdPaese" json:"IdPaese" validate:"len=2"`
+	IDCodice string `xml:"IdCodice" json:"IdCodice" validate:"max=28"`
 }
 
 type indirizzoType struct {
