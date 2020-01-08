@@ -2,8 +2,6 @@
 still under construction, there is nothing to see here
 
 
-
-
 #### Body Invoices
 
 > Allegati > Attachment > Controllare se è base64 

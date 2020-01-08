@@ -113,7 +113,7 @@ type datiRiepilogo struct {
 	Natura            string   `xml:"Natura" json:"Natura" validate:"omitempty,isNatura"`
 	Detraibile        string   `xml:"Detraibile" json:"Detraibile" validate:"omitempty,isPrice,min=4,max=6"`
 	Deducibile        string   `xml:"Deducibile" json:"Deducibile" validate:"omitempty,eq=SI"`
-	EsigibilitaIVA    string   `xml:"EsigibilitaIVA" json:"EsigibilitaIVA" validate:"oneof=I D S,omitempty"`
+	EsigibilitaIVA    string   `xml:"EsigibilitaIVA" json:"EsigibilitaIVA" validate:"omitempty,oneof=I D S"`
 }
 
 type datiRitenuta struct {
