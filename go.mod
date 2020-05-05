@@ -1,4 +1,4 @@
-module github.com/SpinaNico/go-service-invoice
+module github.com/SpinaNico/einvoice
 
 go 1.12
 

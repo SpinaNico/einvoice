@@ -90,7 +90,8 @@ type contattiTrasmittente struct {
 	Email    string `xml:"Email" json:"Email" validate:"omitempty,email,max=255"`
 }
 
-type cedentePrestatore struct {
+// CedentePrestatore rappresent your company
+type CedentePrestatore struct {
 	DatiAnagrafici *datiAnagrafici `xml:"DatiAnagrafici" json:"DatiAnagrafici"`
 	Sede           *indirizzoType  `xml:"Sede" json:"Sede"`
 	Contatti       *contatti       `xml:"Contatti" json:"Contatti"`
@@ -100,9 +101,11 @@ type cedentePrestatore struct {
 //Se io NON sono un residente, devo
 //valorizzare i blocchi: StabileOrganizzazione, RappresentanteFiscale
 
-type cessionarioCommittente struct {
+// CessionarioCommittente this struct rappresent client/customers
+type CessionarioCommittente struct {
 	DatiAnagrafici *datiAnagrafici `xml:"DatiAnagrafici" json:"DatiAnagrafici"`
 	Sede           *indirizzoType  `xml:"Sede" json:"Sede"`
+
 	// Da valorizzare solo se il cessionario non è un residente
 	// quindi per l'operazione deve obbligatoriamente indicare uno stabile
 	// in questa struttura deve indicare lo stabile (che risiede nel territorio italiano)
@@ -123,9 +126,9 @@ type terzoIntermediarioOSoggettoEmittente struct {
 //FatturaElettronicaHeader A tree of structures that represents the Header of an Italian electronic bill
 type FatturaElettronicaHeader struct {
 	DatiTrasmissione                     *datiTrasmissione                     `xml:"DatiTrasmissione" json:"DatiTrasmissione"`
-	CedentePrestatore                    *cedentePrestatore                    `xml:"CedentePrestatore" json:"CedentePrestatore"`
+	CedentePrestatore                    *CedentePrestatore                    `xml:"CedentePrestatore" json:"CedentePrestatore"`
 	RappresentanteFiscale                *rappresentanteFiscale                `xml:"RappresentanteFiscale" json:"RappresentanteFiscale" validate:"omitempty"`
-	CessionarioCommittente               *cessionarioCommittente               `xml:"CessionarioCommittente" json:"CessionarioCommittente"`
+	CessionarioCommittente               *CessionarioCommittente               `xml:"CessionarioCommittente" json:"CessionarioCommittente"`
 	TerzoIntermediarioOSoggettoEmittente *terzoIntermediarioOSoggettoEmittente `xml:"TerzoIntermediarioOSoggettoEmittente" json:"TerzoIntermediarioOSoggettoEmittente" validate:"omitempty"`
 	SoggettoEmittente                    string                                `xml:"SoggettoEmittente" json:"SoggettoEmittente" validate:"omitempty,len=2,oneof=CC CZ"`
 }

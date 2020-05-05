@@ -18,7 +18,7 @@ func getValidator() *validator.Validate {
 	validate.RegisterValidation("isNatura", isNatura)
 	validate.RegisterValidation("isDateTime", isDateTime)
 	validate.RegisterStructValidation(datiTrasmissioneValidate, datiTrasmissione{})
-	validate.RegisterStructValidation(cessionarioCommittenteValidate, cessionarioCommittente{})
+	validate.RegisterStructValidation(cessionarioCommittenteValidate, CessionarioCommittente{})
 	return validate
 }
 
@@ -77,7 +77,7 @@ func datiTrasmissioneValidate(d validator.StructLevel) {
 // This validator also checks whether the Stabile Organization is in the
 // Italian territory so the Nation value is "IT"
 func cessionarioCommittenteValidate(d validator.StructLevel) {
-	data := d.Current().Interface().(cessionarioCommittente)
+	data := d.Current().Interface().(CessionarioCommittente)
 	if data.Sede.Nazione != "IT" {
 		if *data.StabileOrganizzazione == (indirizzoType{}) {
 			d.ReportError(data.StabileOrganizzazione, "StabileOrganizzazione", "", "required", "")

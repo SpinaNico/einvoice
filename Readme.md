@@ -1,5 +1,8 @@
 >This package deals with giving structures for the validation of electronic 
 invoices in the Italian billing system
+
+# This package is still experimental (not use in production)
+
 ---
 
 + [Header](header.go)  is a file that shows all the structures necessary for the electronic invoice header to function. In these structures the clinician is defined as professional.
