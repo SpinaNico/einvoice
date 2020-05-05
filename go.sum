@@ -1,4 +1,6 @@
 github.com/SpinaNico/go-service-invoice v0.0.4 h1:si0wkyRu4oQd9+B8oqLB+7IHpaIaGVxFDBjYlroAKMM=
+github.com/SpinaNico/go-struct-invoice v0.0.4 h1:wM75iubJmQQduG0u60q9rPS2bQAvQogxkpeA/xaki/A=
+github.com/SpinaNico/go-struct-invoice v0.0.4/go.mod h1:tfTCpQpaKrSGyf61o++s5PbLTavsc6Qni3roXVUanQk=
 github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/go-playground/locales v0.12.1 h1:2FITxuFt/xuCNP1Acdhv62OzaCiviiE4kotfhkmOqEc=
 github.com/go-playground/locales v0.12.1/go.mod h1:IUMDtCfWo/w/mtMfIE/IG2K+Ey3ygWanZIBtBW0W2TM=
