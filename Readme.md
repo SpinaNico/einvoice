@@ -3,6 +3,8 @@ invoices in the Italian billing system
 
 # This package is still experimental (not use in production)
 
+[IT](https://www.agenziaentrate.gov.it/portale/documents/20143/2370834/Allegato+A+-+Specifiche+tecniche+vers+1.6_.pdf/a9917ec2-29a3-4f4a-a7d0-93af96fcaad5)
+
 ---
 
 + [Header](header.go)  is a file that shows all the structures necessary for the electronic invoice header to function. In these structures the clinician is defined as professional.

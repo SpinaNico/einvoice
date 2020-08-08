@@ -1,4 +1,4 @@
-package invoice
+package einvoice
 
 import "fmt"
 
@@ -38,7 +38,7 @@ type datiTrasmissione struct {
 	//valorizzato, viene recapitata la fattura nei casi in cui il valore di
 	//CodiceDestinatario sia uguale a ‘0000000’ e non risulti registrato alcun
 	//canale telematico associato alla partita IVA del cessionario/committente.
-	PECDestinatario string `xml:"PECDestinatario" json:"PECDestinatario" validate:"omitempty,min=7,max=256,email"`
+	PECDestinatario string `xml:"PECDestinatario" json:"PECDestinatario" validate:"omitempty,min=7,max=256,email,isntSDIPec"`
 }
 
 // Trovi descrizioni nella sezione 2.2.4.1 Dati Anagrafici
@@ -135,7 +135,7 @@ type FatturaElettronicaHeader struct {
 
 // Validate Check the correctness of the header according to Italian SDi
 func (v FatturaElettronicaHeader) Validate() error {
-	validate := getValidator()
+	validate := Validator()
 	if err := validate.Struct(v); err != nil {
 		return fmt.Errorf("FatturaElettronicaHeader %s", err)
 	}

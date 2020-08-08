@@ -1,4 +1,4 @@
-package invoice
+package einvoice
 
 import "fmt"
 
@@ -25,6 +25,34 @@ type codiceArticolo struct {
 type datiAnagraficiVettore struct {
 	Anagrafica   *anagrafica   `xml:"Anagrafica" json:"Anagrafica"`
 	IDFiscaleIVA *iDFiscaleIVA `xml:"IdFiscaleIVA" json:"IdFiscaleIVA"`
+}
+
+type datiRiepilogo struct {
+	ImponibileImporto string   `xml:"ImponibileImporto" json:"ImponibileImporto" validate:"isPrice"`
+	DatiIVA           *datiIVA `xml:"DatiIVA" json:"DatiIVA"`
+	Natura            string   `xml:"Natura" json:"Natura" validate:"omitempty,isNatura"`
+	Detraibile        string   `xml:"Detraibile" json:"Detraibile" validate:"omitempty,isPrice,min=4,max=6"`
+	Deducibile        string   `xml:"Deducibile" json:"Deducibile" validate:"omitempty,eq=SI"`
+	EsigibilitaIVA    string   `xml:"EsigibilitaIVA" json:"EsigibilitaIVA" validate:"omitempty,oneof=I D S"`
+}
+
+type dettaglioLinee struct {
+	NumeroLinea                int                  `xml:"NumeroLinea" json:"NumeroLinea" validate:"min=1,max=9999"`
+	TipoCessionePrestazione    string               `xml:"TipoCessionePrestazione" json:"TipoCessionePrestazione" validate:"oneof=SC PR AB AC"`
+	CodiceArticolo             *codiceArticolo      `xml:"CodiceArticolo" json:"CodiceArticolo"`
+	Descrizione                string               `xml:"Descrizione" json:"Descrizione" validate:"max=1000"`
+	Quantita                   string               `xml:"Quantita" json:"Quantita" validate:"isPrice,max=21,min=4"`
+	UnitaMisura                string               `xml:"UnitaMisura" json:"UnitaMisura" validate:"max=10"`
+	DataInizioPeriodo          string               `xml:"DataInizioPeriodo" json:"DataInizioPeriodo" validate:"isDate"`
+	DataFinePeriodo            string               `xml:"DataFinePeriodo" json:"DataFinePeriodo" validate:"isDate"`
+	PrezzoUnitario             string               `xml:"PrezzoUnitario" json:"PrezzoUnitario" validate:"isPrice,min=4,max=21"`
+	ScontoMaggiorazione        *scontoMaggiorazione `xml:"ScontoMaggiorazione" json:"ScontoMaggiorazione"`
+	PrezzoTotale               string               `xml:"PrezzoTotale" json:"PrezzoTotale" validate:"isPrice,min=4,max=21"`
+	AliquotaIVA                string               `xml:"AliquotaIVA" json:"AliquotaIVA" validate:"isPrice,min=4,max=6"`
+	Ritenuta                   string               `xml:"Ritenuta" json:"Ritenuta" validate:"omitempty,eq=SI"`
+	Natura                     string               `xml:"Natura" json:"Natura" validate:"isNatura"`
+	RiferimentoAmministrazione string               `xml:"RiferimentoAmministrazione" json:"RiferimentoAmministrazione" validate:"max=20"`
+	AltriDatiGestionali        *altriDatiGestionali `xml:"AltriDatiGestionali" json:"AltriDatiGestionali"`
 }
 
 type datiBeniServizi struct {
@@ -70,7 +98,14 @@ type datiDDT struct {
 }
 
 type datiGeneraliDocumento struct {
-	TipoDocumento          string                  `xml:"TipoDocumento" json:"TipoDocumento" validate:"oneof=TD01 TD02 TD03 TD04 TD05 TD06 TD20"`
+	//	TD01 Fattura
+	// 	TD02 Acconto/Anticipo su fattura
+	//	TD03  Acconto/Anticipo su parcella
+	//	TD04 Nota di Credito
+	//	TD05 Nota di Debito
+	//	TD06  Parcella
+	//	TD20  Autofattura
+	TipoDocumento          string                  `xml:"TipoDocumento" json:"TipoDocumento" validate:"isTypeDocument"`
 	Divisa                 string                  `xml:"Divisa" json:"Divisa" validate:"len=3"`
 	Data                   string                  `xml:"Data" json:"Data" validate:"isDate"`
 	Numero                 string                  `xml:"Numero" json:"Numero"`
@@ -107,15 +142,6 @@ type datiPagamento struct {
 	DettaglioPagamento  *dettaglioPagamento `xml:"DettaglioPagamento" json:"DettaglioPagamento"`
 }
 
-type datiRiepilogo struct {
-	ImponibileImporto string   `xml:"ImponibileImporto" json:"ImponibileImporto" validate:"isPrice"`
-	DatiIVA           *datiIVA `xml:"DatiIVA" json:"DatiIVA"`
-	Natura            string   `xml:"Natura" json:"Natura" validate:"omitempty,isNatura"`
-	Detraibile        string   `xml:"Detraibile" json:"Detraibile" validate:"omitempty,isPrice,min=4,max=6"`
-	Deducibile        string   `xml:"Deducibile" json:"Deducibile" validate:"omitempty,eq=SI"`
-	EsigibilitaIVA    string   `xml:"EsigibilitaIVA" json:"EsigibilitaIVA" validate:"omitempty,oneof=I D S"`
-}
-
 type datiRitenuta struct {
 	TipoRitenuta     string `xml:"TipoRitenuta" json:"TipoRitenuta" validate:"oneof=RT01 RT02"`
 	ImportoRitenuta  string `xml:"ImportoRitenuta" json:"ImportoRitenuta" validate:"isPrice,min=4,max=15"`
@@ -148,25 +174,6 @@ type datiVeicolo struct {
 	TotalePercorso string `xml:"TotalePercorso" json:"TotalePercorso" validate:"max=15"`
 }
 
-type dettaglioLinee struct {
-	NumeroLinea                int                  `xml:"NumeroLinea" json:"NumeroLinea" validate:"min=1,max=9999"`
-	TipoCessionePrestazione    string               `xml:"TipoCessionePrestazione" json:"TipoCessionePrestazione" validate:"oneof=SC PR AB AC"`
-	CodiceArticolo             *codiceArticolo      `xml:"CodiceArticolo" json:"CodiceArticolo"`
-	Descrizione                string               `xml:"Descrizione" json:"Descrizione" validate:"max=1000"`
-	Quantita                   string               `xml:"Quantita" json:"Quantita" validate:"isPrice,max=21,min=4"`
-	UnitaMisura                string               `xml:"UnitaMisura" json:"UnitaMisura" validate:"max=10"`
-	DataInizioPeriodo          string               `xml:"DataInizioPeriodo" json:"DataInizioPeriodo" validate:"isDate"`
-	DataFinePeriodo            string               `xml:"DataFinePeriodo" json:"DataFinePeriodo" validate:"isDate"`
-	PrezzoUnitario             string               `xml:"PrezzoUnitario" json:"PrezzoUnitario" validate:"isPrice,min=4,max=21"`
-	ScontoMaggiorazione        *scontoMaggiorazione `xml:"ScontoMaggiorazione" json:"ScontoMaggiorazione"`
-	PrezzoTotale               string               `xml:"PrezzoTotale" json:"PrezzoTotale" validate:"isPrice,min=4,max=21"`
-	AliquotaIVA                string               `xml:"AliquotaIVA" json:"AliquotaIVA" validate:"isPrice,min=4,max=6"`
-	Ritenuta                   string               `xml:"Ritenuta" json:"Ritenuta" validate:"omitempty,eq=SI"`
-	Natura                     string               `xml:"Natura" json:"Natura" validate:"isNatura"`
-	RiferimentoAmministrazione string               `xml:"RiferimentoAmministrazione" json:"RiferimentoAmministrazione" validate:"max=20"`
-	AltriDatiGestionali        *altriDatiGestionali `xml:"AltriDatiGestionali" json:"AltriDatiGestionali"`
-}
-
 type dettaglioPagamento struct {
 	Beneficiario                    string `xml:"Beneficiario" json:"Beneficiario" validate:"max=200"`
 	ModalitaPagamento               string `xml:"ModalitaPagamento" json:"ModalitaPagamento" validate:"oneof=MP01 MP02 MP03 MP04 MP05 MP06 MP07 MP08 MP09 MP10 MP11 MP12 MP13 MP14 MP15 MP16 MP17 MP18 MP19 MP20 MP21 MP22"`
@@ -182,7 +189,7 @@ type dettaglioPagamento struct {
 	IstitutoFinanziario             string `xml:"IstitutoFinanziario" json:"IstitutoFinanziario" validate:"omitempty,max=80"`
 
 	IBAN string `xml:"IBAN" json:"IBAN" validate:"omitempty,min=15,max=34,required_with_all=ABI CAB BIC"`
-	ABI  int    `xml:"ABI" json:"ABI" validate:"omitempty,len=5,required_with_all=IBAN CAB BIC"`
+	ABI  string `xml:"ABI" json:"ABI" validate:"omitempty,len=5,required_with_all=IBAN CAB BIC"`
 	CAB  string `xml:"CAB" json:"CAB" validate:"omitempty,len=5,required_with_all=ABI IBAN BIC"`
 	BIC  string `xml:"BIC" json:"BIC" validate:"omitempty,min=8,max=11,required_with_all=ABI CAB IBAN"`
 
@@ -199,7 +206,7 @@ type fatturaPrincipale struct {
 }
 
 type scontoMaggiorazione struct {
-	Tipo        string  `xml:"Tipo" json:"Tipo"`
+	Tipo        string  `xml:"Tipo" json:"Tipo" validate:"oneof=SC MG"`
 	Percentuale float32 `xml:"Percentuale" json:"Percentuale"`
 	Importo     float32 `xml:"Importo" json:"Importo"`
 }
@@ -215,7 +222,7 @@ type FatturaElettronicaBody struct {
 
 // Validate Valid the body of the invoice Italian Electronics
 func (v FatturaElettronicaBody) Validate() error {
-	validate := getValidator()
+	validate := Validator()
 	if err := validate.Struct(v); err != nil {
 		return fmt.Errorf("FatturaElettronicaBody %s", err)
 	}

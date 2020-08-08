@@ -1,4 +1,4 @@
-package invoice
+package einvoice
 
 type anagrafica struct {
 	Denominazione string `xml:"Denominazione" json:"Denominazione" validate:"omitempty,max=80,required_without_all=Nome Cognome"`
