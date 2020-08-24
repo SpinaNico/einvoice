@@ -23,5 +23,6 @@ message error {
 }
 
 message Document {
-    bytes xml=1;
+    bytes xml = 1;
+    string name = 2;
 }
