@@ -1,29 +1,36 @@
 package einvoice
 
 import (
-	"fmt"
-	"strings"
+	"log"
+	"regexp"
 
 	"gopkg.in/go-playground/validator.v9"
 )
 
-type SDIError struct {
-	Errors map[string]string
-}
+func SDIValidation(filename string, f *FatturaElettronica) error {
+	var errors = SDIError{Errors: make(map[string]string, 0)}
 
-func (e *SDIError) Error() string {
+	if filename == "" {
+		errors.Errors["00001"] = ErrorsMap["00001"]
+	} else {
+		// iso test
+		if ok, err := regexp.Match("^[A-Z]{2}", []byte(filename)); ok != true {
+			if err != nil {
+				log.Fatal(err)
+			}
+			errors.Errors["00001"] = ErrorsMap["00001"]
+			errors.Errors["A0001"] = ErrorsMap["A0001"]
+		}
+		if ok, err := regexp.Match("^[A-Z]{2}[a-zA-Z0-9]{11,16}_DF_[a-zA-Z0-9]{5}", []byte(filename)); ok != true {
+			if err != nil {
+				log.Fatal(err)
+			}
+			errors.Errors["00001"] = ErrorsMap["00001"]
+			errors.Errors["A0002"] = ErrorsMap["A0002"]
+		}
 
-	var strs []string
-	for k, v := range e.Errors {
-		strs = append(strs, fmt.Sprintf("sdiError-%s: %s", k, v))
 	}
 
-	return strings.Join(strs, "\n")
-}
-
-func SDIValidation(f *FatturaElettronica) error {
-
-	var errors SDIError
 	err := f.Validate()
 	if err != nil {
 		for _, err := range err.(validator.ValidationErrors) {
@@ -34,6 +41,9 @@ func SDIValidation(f *FatturaElettronica) error {
 				break
 			}
 		}
+	}
+	if len(errors.Errors) == 0 {
+		return nil
 	}
 	return &errors
 }

@@ -1,6 +1,39 @@
 package einvoice
 
+import (
+	"fmt"
+	"strings"
+)
+
+type SDIError struct {
+	Errors map[string]string
+}
+
+func (e *SDIError) Error() string {
+
+	var strs []string
+	for k, v := range e.Errors {
+		strs = append(strs, fmt.Sprintf("sdiError-%s: %s", k, v))
+	}
+
+	return strings.Join(strs, "\n")
+}
+
+func (e *SDIError) GetCodes() []string {
+	var ss []string
+
+	for key, _ := range e.Errors {
+		ss = append(ss, key)
+	}
+	return ss
+}
+
 var ErrorsMap = map[string]string{
+
+	// sdi errors plus
+	"A0001": "Le prime due lettere del nome file devono seguire lo standard   ISO 3166-1 alpha-2 code, inoltre devono essere maiuscole.",
+	"A0002": "il nome fattura non è conforme secondo le regole di fatturazione per la versione 1.6/1.5 ",
+
 	"00330": "l’indirizzo PEC indicato nel campo PECDestinatario  corrisponde ad una casella PEC del SdI",
 	"00413": "AliquotaIVA è zero, ma non è stata definita la natura",
 	"00415": "L'elemento Ritenuta è stato valorizzato con SI, ma non è presente il blocco DatiRitenuta.",
