@@ -2,30 +2,65 @@ package einvoice
 
 import (
 	"fmt"
+	"math/rand"
+	"reflect"
 	"strings"
+	"time"
+
+	"gopkg.in/go-playground/validator.v9"
 )
 
-type SDIError struct {
-	Errors map[string]string
+type SDIErrorSingle struct {
+	Code  string `json:"code" xml:"code"`
+	Error string `json:"error" xml:"error"`
 }
 
-func (e *SDIError) Error() string {
+type SDIErrors struct {
+	Errors []*SDIErrorSingle
+}
+
+func (e *SDIErrors) Error() string {
 
 	var strs []string
-	for k, v := range e.Errors {
-		strs = append(strs, fmt.Sprintf("sdiError-%s: %s", k, v))
+	for _, v := range e.Errors {
+		strs = append(strs, fmt.Sprintf("sdiError-%s: %s", v.Code, v.Error))
 	}
 
 	return strings.Join(strs, "\n")
 }
 
-func (e *SDIError) GetCodes() []string {
+func (e *SDIErrors) GetCodes() []string {
 	var ss []string
 
-	for key, _ := range e.Errors {
-		ss = append(ss, key)
+	for _, v := range e.Errors {
+		ss = append(ss, v.Code)
 	}
 	return ss
+}
+
+func (e *SDIErrors) addErrors(err error) {
+
+	if err != nil {
+		if reflect.TypeOf(err) == reflect.TypeOf(validator.ValidationErrors{}) {
+			for _, err := range err.(validator.ValidationErrors) {
+
+				switch err.Tag() {
+				case "isntSDIPec":
+					e.Errors = append(e.Errors, &SDIErrorSingle{Code: "00330", Error: ErrorsMap["00330"]})
+					break
+				case "ivaZeroNatureWrong":
+
+				default:
+					e.Errors = append(e.Errors, &SDIErrorSingle{Code: randomString(), Error: translateSDI(err)})
+				}
+			}
+		} else {
+
+			e.Errors = append(e.Errors, &SDIErrorSingle{Code: "???", Error: err.Error()})
+
+		}
+	}
+
 }
 
 var ErrorsMap = map[string]string{
@@ -33,6 +68,8 @@ var ErrorsMap = map[string]string{
 	// sdi errors plus
 	"A0001": "Le prime due lettere del nome file devono seguire lo standard   ISO 3166-1 alpha-2 code, inoltre devono essere maiuscole.",
 	"A0002": "il nome fattura non è conforme secondo le regole di fatturazione per la versione 1.6/1.5 ",
+
+	"A0003": "Non puoi passarmi una fattura senza nessun body",
 
 	"00330": "l’indirizzo PEC indicato nel campo PECDestinatario  corrisponde ad una casella PEC del SdI",
 	"00413": "AliquotaIVA è zero, ma non è stata definita la natura",
@@ -213,4 +250,29 @@ var ErrorsMap = map[string]string{
 			ultimo stabilito per l’invio dei dati fattura relativi al periodo di riferimento,
 			presenta il campo DataRegistrazione antecedente al termine iniziale del
 			periodo stesso)`,
+}
+
+func translateSDI(err validator.FieldError) string {
+
+	switch err.Tag() {
+	case "required":
+		return fmt.Sprintf("Questo campo %s è richiesto ", err.Field())
+	default:
+		return fmt.Sprintf("Questo campo \"%s\" non è valido per questo tag %s", err.Field(), err.Tag())
+	}
+
+}
+
+func randomString() string {
+	const charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
+
+	var seededRand *rand.Rand = rand.New(
+		rand.NewSource(time.Now().UnixNano()))
+
+	b := make([]byte, 4)
+	for i := range b {
+		b[i] = charset[seededRand.Intn(len(charset))]
+	}
+
+	return fmt.Sprintf("?%s", string(b))
 }

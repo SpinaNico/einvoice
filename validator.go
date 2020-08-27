@@ -2,6 +2,7 @@ package einvoice
 
 import (
 	"fmt"
+	"log"
 	"regexp"
 	"strconv"
 	"time"
@@ -12,7 +13,6 @@ import (
 func Validator() *validator.Validate {
 	var validate *validator.Validate
 	validate = validator.New()
-	validate.RegisterValidation("regimeValidate", regimeFiscaleValidator)
 	validate.RegisterValidation("isInteger", isInteger)
 	validate.RegisterValidation("isDate", isDate)
 	validate.RegisterValidation("isPrice", isPrice)
@@ -20,22 +20,24 @@ func Validator() *validator.Validate {
 	validate.RegisterValidation("isntSDIPec", isntSDIPec)
 	validate.RegisterValidation("isNatura", isNatura)
 	validate.RegisterValidation("isDateTime", isDateTime)
+	validate.RegisterValidation("isIva", isIva)
 	validate.RegisterValidation("isMP", isMP)
+	validate.RegisterValidation("isRF", isRF)
 	validate.RegisterStructValidation(datiTrasmissioneValidate, datiTrasmissione{})
 	validate.RegisterStructValidation(cessionarioCommittenteValidate, CessionarioCommittente{})
+	validate.RegisterStructValidation(validateDatiBeniServizi, datiBeniServizi{})
 	return validate
 }
 
-func regimeFiscaleValidator(rf validator.FieldLevel) bool {
+func isRF(rf validator.FieldLevel) bool {
 	RF := rf.Field().String()
 
-	regimeFiscale := make(map[string]string)
-	for i := 1; i < 20; i++ {
-		regimeFiscale[fmt.Sprintf("RF%02d", i)] = "true"
+	for key, _ := range RegimeFiscale {
+		if RF == key {
+			return false
+		}
 	}
-	_, exists := regimeFiscale[string(RF)]
-	//println(exists, RF)
-	return exists == true
+	return true
 }
 
 // control id Field is Integer
@@ -62,36 +64,6 @@ func checkDatiRitenuta(d validator.StructLevel) {
 		}
 	}
 
-}
-
-// Struct Level control
-// This control at the structure level is essential, check that if the
-// target code is "0000000" the pec is not empty
-func datiTrasmissioneValidate(d validator.StructLevel) {
-	data := d.Current().Interface().(datiTrasmissione)
-	if data.CodiceDestinatario == "0000000" {
-		if data.PECDestinatario == "" {
-			d.ReportError(data.PECDestinatario, "PECDestinatario", "", "required", "")
-		}
-	}
-
-}
-
-// if the person making the invoice is a foreigner, the Italian office must be indicated.
-// This validator also checks whether the Stabile Organization is in the
-// Italian territory so the Nation value is "IT"
-func cessionarioCommittenteValidate(d validator.StructLevel) {
-	data := d.Current().Interface().(CessionarioCommittente)
-	if data.Sede.Nazione != "IT" {
-		if *data.StabileOrganizzazione == (indirizzoType{}) {
-			d.ReportError(data.StabileOrganizzazione, "StabileOrganizzazione", "", "required", "")
-		} else {
-			if data.StabileOrganizzazione.Nazione != "IT" {
-				d.ReportError(data.StabileOrganizzazione, "StabileOrganizzazione", "", "eq", "")
-			}
-		}
-
-	}
 }
 
 // control is is a price number 0.00
@@ -146,6 +118,17 @@ func isMP(field validator.FieldLevel) bool {
 	return false
 }
 
+func isTCP(field validator.FieldLevel) bool {
+	c := field.Field().String()
+
+	for key, _ := range EnumTipoCessionePrestazione {
+		if key == c {
+			return true
+		}
+	}
+	return false
+}
+
 func isTypeDocument(field validator.FieldLevel) bool {
 	c := field.Field().String()
 
@@ -162,4 +145,15 @@ func isntSDIPec(field validator.FieldLevel) bool {
 	matched, _ := regexp.MatchString(`sdi\d\d@pec\.fatturapa\.it`, c)
 	return matched
 	//sdixx@pec.fatturapa.it
+}
+
+func isIva(field validator.FieldLevel) bool {
+	c := field.Field().String()
+	_, err := strconv.ParseFloat(c, 32)
+	if err != nil {
+		log.Println("ERROR: ", err)
+		return true
+	}
+
+	return false
 }

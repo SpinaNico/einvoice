@@ -1,7 +1,5 @@
 package einvoice
 
-import "fmt"
-
 type allegati struct {
 	NomeAttachment        string `xml:"NomeAttachment" json:"NomeAttachment" validate:"max=60"`
 	AlgoritmoCompressione string `xml:"AlgoritmoCompressione" json:"AlgoritmoCompressione" validate:"max=10"`
@@ -38,9 +36,9 @@ type datiRiepilogo struct {
 
 type dettaglioLinee struct {
 	NumeroLinea                int                  `xml:"NumeroLinea" json:"NumeroLinea" validate:"min=1,max=9999"`
-	TipoCessionePrestazione    string               `xml:"TipoCessionePrestazione" json:"TipoCessionePrestazione" validate:"oneof=SC PR AB AC"`
+	TipoCessionePrestazione    string               `xml:"TipoCessionePrestazione" json:"TipoCessionePrestazione" validate:"isTCP"`
 	CodiceArticolo             *codiceArticolo      `xml:"CodiceArticolo" json:"CodiceArticolo"`
-	Descrizione                string               `xml:"Descrizione" json:"Descrizione" validate:"max=1000"`
+	Descrizione                string               `xml:"Descrizione" json:"Descrizione" validate:"required,max=1000"`
 	Quantita                   string               `xml:"Quantita" json:"Quantita" validate:"isPrice,max=21,min=4"`
 	UnitaMisura                string               `xml:"UnitaMisura" json:"UnitaMisura" validate:"max=10"`
 	DataInizioPeriodo          string               `xml:"DataInizioPeriodo" json:"DataInizioPeriodo" validate:"isDate"`
@@ -48,7 +46,7 @@ type dettaglioLinee struct {
 	PrezzoUnitario             string               `xml:"PrezzoUnitario" json:"PrezzoUnitario" validate:"isPrice,min=4,max=21"`
 	ScontoMaggiorazione        *scontoMaggiorazione `xml:"ScontoMaggiorazione" json:"ScontoMaggiorazione"`
 	PrezzoTotale               string               `xml:"PrezzoTotale" json:"PrezzoTotale" validate:"isPrice,min=4,max=21"`
-	AliquotaIVA                string               `xml:"AliquotaIVA" json:"AliquotaIVA" validate:"isPrice,min=4,max=6"`
+	AliquotaIVA                string               `xml:"AliquotaIVA" json:"AliquotaIVA" validate:"isIva,isPrice,min=4,max=6"`
 	Ritenuta                   string               `xml:"Ritenuta" json:"Ritenuta" validate:"omitempty,eq=SI"`
 	Natura                     string               `xml:"Natura" json:"Natura" validate:"isNatura"`
 	RiferimentoAmministrazione string               `xml:"RiferimentoAmministrazione" json:"RiferimentoAmministrazione" validate:"max=20"`
@@ -56,7 +54,7 @@ type dettaglioLinee struct {
 }
 
 type datiBeniServizi struct {
-	DettaglioLinee []*dettaglioLinee `xml:"DettaglioLinee" json:"DettaglioLinee"`
+	DettaglioLinee []*dettaglioLinee `xml:"DettaglioLinee" json:"DettaglioLinee" `
 	DatiRiepilogo  *datiRiepilogo    `xml:"DatiRiepilogo" json:"DatiRiepilogo"`
 }
 
@@ -70,7 +68,7 @@ type datiCassaPrevidenziale struct {
 	AlCassa                    string `xml:"AlCassa" json:"AlCassa" validate:"isPrice"`
 	ImportoContributoCassa     string `xml:"ImportoContributoCassa" json:"ImportoContributoCassa" validate:"isPrice,max=15"`
 	ImponibileCassa            string `xml:"ImponibileCassa" json:"ImponibileCassa" validate:"isPrice,max=15"`
-	AliquotaIVA                string `xml:"AliquotaIVA" json:"AliquotaIVA" validate:"isPrice,max=6,min=4"`
+	AliquotaIVA                string `xml:"AliquotaIVA" json:"AliquotaIVA" validate:"isIva,isPrice,max=6,min=4"`
 	Ritenuta                   string `xml:"Ritenuta" json:"Ritenuta" validate:"eq=SI,len=2"`
 	Natura                     string `xml:"Natura" json:"Natura" validate:"isNatura"`
 	RiferimentoAmministrazione string `xml:"RiferimentoAmministrazione" json:"RiferimentoAmministrazione" validate:"max=20"`
@@ -133,7 +131,7 @@ type datiGenerali struct {
 }
 
 type datiIVA struct {
-	AliquotaIVA string `xml:"Aliquota" json:"Aliquota" validate:"isPrice"`
+	AliquotaIVA string `xml:"Aliquota" json:"Aliquota" validate:"isIva,isPrice"`
 	Imposta     string `xml:"Imposta" json:"Imposta" validate:"isPrice"`
 }
 
@@ -221,10 +219,3 @@ type FatturaElettronicaBody struct {
 }
 
 // Validate Valid the body of the invoice Italian Electronics
-func (v FatturaElettronicaBody) Validate() error {
-	validate := Validator()
-	if err := validate.Struct(v); err != nil {
-		return fmt.Errorf("FatturaElettronicaBody %s", err)
-	}
-	return nil
-}
