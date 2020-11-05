@@ -6,7 +6,8 @@ type FatturaElettronica struct {
 	FatturaElettronicaHeader FatturaElettronicaHeader `xml:"FatturaElettronicaHeader" json:"FatturaElettronicaHeader"`
 	FatturaElettronicaBody   []FatturaElettronicaBody `xml:"FatturaElettronicaBody" json:"FatturaElettronicaBody"`
 	// ds:Signature todo: firma digitale da implementare
+	Signature string `xml:"ds:Signature" json:"Signature"`
 }
 
 // Version The reference version of the electronic invoice returns
-func (f FatturaElettronica) Version() string { return "1.6" }
+func (f FatturaElettronica) Version() string { return "1.6.1" }

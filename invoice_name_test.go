@@ -6,7 +6,7 @@ func mockF() *FatturaElettronica {
 	return &FatturaElettronica{
 		FatturaElettronicaHeader: FatturaElettronicaHeader{
 			CessionarioCommittente: &CessionarioCommittente{
-				Sede: &indirizzoType{
+				Sede: &IndirizzoType{
 					Nazione:      "IT",
 					Comune:       "Catania",
 					CAP:          "95010",
@@ -18,8 +18,8 @@ func mockF() *FatturaElettronica {
 		},
 		FatturaElettronicaBody: []FatturaElettronicaBody{
 			{
-				DatiBeniServizi: &datiBeniServizi{
-					DettaglioLinee: []*dettaglioLinee{
+				DatiBeniServizi: &DatiBeniServizi{
+					DettaglioLinee: []*DettaglioLinee{
 						{
 							NumeroLinea: 1,
 						},

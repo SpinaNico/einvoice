@@ -3,24 +3,42 @@ package einvoice
 const ivaZeroNatureWrong = "ivaZeroNatureWrong"
 const carbWrongArticleCode = "carbWrongArticle"
 
-var EnumTipoCessionePrestazione = map[string]string{
+var TipoCessionePrestazione = map[string]string{
 	"SC": "Sconto",
 	"PR": "Premio",
 	"AB": "Abbuono",
 	"AC": "Spesa accessoria",
 }
-var TypeDocument = map[string]string{
+var TipoDocumento = map[string]string{
 	"TD01": "Fattura",
+	"TD02": "Acconto/Anticipo su fattura",
+	"TD03": "Acconto/Anticipo su parcella",
+
 	"TD04": "Nota di credito",
 	"TD05": "Nota di debito",
+	"TD06": "Parcella",
+
 	"TD07": "Fattura semplificata",
 	"TD08": "Nota di Credito semplificata",
 	"TD10": "Fattura per acquisto intracomunitario beni",
 	"TD11": "Fattura per acquisto intracomunitario servizi",
 	"TD12": "Documento riepilogativo (art.6,DPR 695/1996)",
+
+	"TD16": "Integrazione fattura reverse charge interno",
+	"TD17": "Integrazione/autofattura per acquisto servizi dall’estero",
+	"TD18": "Integrazione per acquisto di beni intracomunitari",
+	"TD19": "Integrazione/autofattura per acquisto di beni ex art.17 c.2 DPR 633/72",
+	"TD20": "Autofattura per regolarizzazione e integrazione delle fatture (art.6 c.8 d.lgs. 471/97 o art.46 c.5 D.L. 331/93)",
+	"TD21": "Autofattura per splafonamento",
+	"TD22": "Estrazione beni da Deposito IVA",
+	"TD23": "Estrazione beni da Deposito IVA con versamento dell’IVA",
+	"TD24": "Fattura differita di cui all’art.21, comma 4, lett. a)",
+	"TD25": "Fattura differita di cui all’art.21, comma 4, terzo periodo lett. b)",
+	"TD26": "Cessione di beni ammortizzabili e per passaggi interni (ex art.36 DPR 633/72)",
+	"TD27": "Fattura per autoconsumo o per cessioni gratuite senza rivalsa",
 }
 
-var NatureWithDescription = map[string]string{
+var Natura = map[string]string{
 	"N1":   "escluse ex art.15",
 	"N2":   "non soggette",
 	"N2.1": "non soggette ad IVA ai sensi degli artt. Da 7 a 7-septies del DPR 633/72",
@@ -47,8 +65,13 @@ var NatureWithDescription = map[string]string{
 	"N7":   "IVA assolta in altro stato UE (vendite a distanza ex art. 40 commi 3 e 4 e art. 41 comma 1 lett. b, DL 331/93; prestazione di servizi di telecomunicazioni, tele-radiodiffusione ed elettronici ex art. 7-sexies lett. f, g, DPR 633/72 e art. 74-sexies, DPR 633/72)",
 }
 
-var MethodsPayments = map[string]string{
+var CondizioniPagamento = map[string]string{
+	"TP01": "pagamento a rate",
+	"TP02": "pagamento completo",
+	"TP03": "anticipo",
+}
 
+var MetodiPagamento = map[string]string{
 	"MP01": "contanti",
 	"MP02": "assegno",
 	"MP03": "assegno circolare",
@@ -92,4 +115,65 @@ var RegimeFiscale = map[string]string{
 	"RF17": "IVA per cassa (art. 32-bis, D.L. 83/2012);",
 	"RF18": "Altro;",
 	"RF19": "Forfettario (art.1, c. 54-89, L. 190/2014)",
+}
+
+var SocioUnico = map[string]string{
+	"SU": "La società è a socio unico",
+	"SM": "La società non è a socio unico",
+}
+
+var StatoLiquidazione = map[string]string{
+	"LS": "La società è in stato di liquidazione",
+	"LN": "La società non è in stato di liquidazione",
+}
+
+var SoggettoEmittente = map[string]string{
+	"CC": "Cessionario/committente",
+	"TZ": "Soggetto terzo",
+}
+
+var TipoRitenuta = map[string]string{
+	"RT01": "Ritenuta persone fisiche",
+	"RT02": "Ritenuta persone giuridiche",
+	"RT03": "Contributo INPS",
+	"RT04": "Contributo ENASARCO",
+	"RT05": "Contributo ENPAM",
+	"RT06": "Altro contributo previdenziale",
+}
+
+var TipoCassa = map[string]string{
+
+	"TC01": "Cassa Nazionale Previdenza e Assistenza Avvocati e Procuratori Legali",
+	"TC02": "Cassa Previdenza Dottori Commercialisti",
+	"TC03": "Cassa Previdenza e Assistenza Geometri",
+	"TC04": "Cassa Nazionale Previdenza e Assistenza Ingegneri e Architetti Liberi Professionisti",
+	"TC05": "Cassa Nazionale del Notariato",
+	"TC06": "Cassa Nazionale Previdenza e Assistenza Ragionieri e Periti Commerciali",
+	"TC07": "Ente Nazionale Assistenza Agenti e Rappresentanti di Commercio (ENASARCO)",
+	"TC08": "Ente Nazionale Previdenza e Assistenza Consulenti del Lavoro (ENPACL)",
+	"TC09": "Ente Nazionale Previdenza e Assistenza Medici (ENPAM)",
+	"TC10": "Ente Nazionale Previdenza e Assistenza Farmacisti (ENPAF)",
+	"TC11": "Ente Nazionale Previdenza e Assistenza Veterinari (ENPAV)",
+	"TC12": "Ente Nazionale Previdenza e Assistenza Impiegati dell'Agricoltura (ENPAIA)",
+	"TC13": "Fondo Previdenza Impiegati Imprese di Spedizione e Agenzie Marittime",
+	"TC14": "Istituto Nazionale Previdenza Giornalisti Italiani (INPGI)",
+	"TC15": "Opera Nazionale Assistenza Orfani Sanitari Italiani (ONAOSI)",
+	"TC16": "Autonoma Assistenza Integrativa Giornalisti Italiani (CASAGIT)",
+	"TC17": "Ente Previdenza Periti Industriali e Periti Industriali Laureati (EPPI)",
+	"TC18": "Ente Previdenza e Assistenza Pluricategoriale (EPAP)",
+	"TC19": "Ente Nazionale Previdenza e Assistenza Biologi (ENPAB)",
+	"TC20": "Ente Nazionale Previdenza e Assistenza Professione Infermieristica (ENPAPI)",
+	"TC21": "Ente Nazionale Previdenzae Assistenza Psicologi (ENPAP)",
+	"TC22": "INPS",
+}
+
+var TipoScontoMaggiorazione = map[string]string{
+	"SC": "Sconto",
+	"MG": "Maggiorazione",
+}
+
+var EsigibilitaIVA = map[string]string{
+	"I": "IVA ad esigibilità immediata",
+	"D": "IVA ad esigibilità differita",
+	"S": "scissione dei pagamenti",
 }

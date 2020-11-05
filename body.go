@@ -1,6 +1,6 @@
 package einvoice
 
-type allegati struct {
+type Allegati struct {
 	NomeAttachment        string `xml:"NomeAttachment" json:"NomeAttachment" validate:"max=60"`
 	AlgoritmoCompressione string `xml:"AlgoritmoCompressione" json:"AlgoritmoCompressione" validate:"max=10"`
 	FormatoAttachment     string `xml:"FormatoAttachment" json:"FormatoAttachment" validate:"max=10"`
@@ -8,63 +8,67 @@ type allegati struct {
 	Attachment            string `xml:"Attachment" json:"Attachment" validate:"base64"`
 }
 
-type altriDatiGestionali struct {
+type AltriDatiGestionali struct {
 	TipoDato          string `xml:"TipoDato" json:"TipoDato" validate:"max=10"`
 	RiferimentoTesto  string `xml:"RiferimentoTesto" json:"RiferimentoTesto" validate:"max=60"`
 	RiferimentoNumero string `xml:"RiferimentoNumero" json:"RiferimentoNumero" validate:"isPrice"`
 	RiferimentoData   string `xml:"RiferimentoData" json:"RiferimentoData" validate:"isDate"`
 }
 
-type codiceArticolo struct {
+type CodiceArticolo struct {
 	CodiceTipo   string `xml:"CodiceTipo" json:"CodiceTipo" validate:"max=35"`
 	CodiceValore string `xml:"CodiceValore" json:"CodiceValore" validate:"max=35"`
 }
 
 type datiAnagraficiVettore struct {
-	Anagrafica   *anagrafica   `xml:"Anagrafica" json:"Anagrafica"`
-	IDFiscaleIVA *iDFiscaleIVA `xml:"IdFiscaleIVA" json:"IdFiscaleIVA"`
+	Anagrafica   *Anagrafica   `xml:"Anagrafica" json:"Anagrafica"`
+	IDFiscaleIVA *IDFiscaleIVA `xml:"IdFiscaleIVA" json:"IdFiscaleIVA"`
 }
 
 type datiRiepilogo struct {
-	ImponibileImporto string   `xml:"ImponibileImporto" json:"ImponibileImporto" validate:"isPrice"`
-	DatiIVA           *datiIVA `xml:"DatiIVA" json:"DatiIVA"`
-	Natura            string   `xml:"Natura" json:"Natura" validate:"omitempty,isNatura"`
-	Detraibile        string   `xml:"Detraibile" json:"Detraibile" validate:"omitempty,isPrice,min=4,max=6"`
-	Deducibile        string   `xml:"Deducibile" json:"Deducibile" validate:"omitempty,eq=SI"`
-	EsigibilitaIVA    string   `xml:"EsigibilitaIVA" json:"EsigibilitaIVA" validate:"omitempty,oneof=I D S"`
+	//DatiIVA        *DatiIVA `xml:"DatiIVA" json:"DatiIVA"`
+	AlliquotaIVA      float32 `xml:"AliquotaIVA" json:"AliquotaIVA"`
+	Natura            string  `xml:"Natura" json:"Natura" validate:"omitempty,isNatura"`
+	SpeseAccessorie   float32 `xml:"SpeseAccessorie" json:"SpeseAccessorie"`
+	Arrotondamento    float32 `xml:"Arrotondamento" json:"Arrotondamento"`
+	ImponibileImporto float32 `xml:"ImponibileImporto" json:"ImponibileImporto"`
+	Imposta           float32 `xml:"Imposta" json:"Imposta"`
+
+	EsigibilitaIVA       string `xml:"EsigibilitaIVA" json:"EsigibilitaIVA" validate:"omitempty,oneof=I D S"`
+	RiferimentoNormativo string `xml:"RiferimentoNormativo" json:"RiferimentoNormativo"`
 }
 
-type dettaglioLinee struct {
-	NumeroLinea                int                  `xml:"NumeroLinea" json:"NumeroLinea" validate:"min=1,max=9999"`
-	TipoCessionePrestazione    string               `xml:"TipoCessionePrestazione" json:"TipoCessionePrestazione" validate:"isTCP"`
-	CodiceArticolo             *codiceArticolo      `xml:"CodiceArticolo" json:"CodiceArticolo"`
-	Descrizione                string               `xml:"Descrizione" json:"Descrizione" validate:"required,max=1000"`
-	Quantita                   string               `xml:"Quantita" json:"Quantita" validate:"isPrice,max=21,min=4"`
-	UnitaMisura                string               `xml:"UnitaMisura" json:"UnitaMisura" validate:"max=10"`
-	DataInizioPeriodo          string               `xml:"DataInizioPeriodo" json:"DataInizioPeriodo" validate:"isDate"`
-	DataFinePeriodo            string               `xml:"DataFinePeriodo" json:"DataFinePeriodo" validate:"isDate"`
-	PrezzoUnitario             string               `xml:"PrezzoUnitario" json:"PrezzoUnitario" validate:"isPrice,min=4,max=21"`
-	ScontoMaggiorazione        *scontoMaggiorazione `xml:"ScontoMaggiorazione" json:"ScontoMaggiorazione"`
-	PrezzoTotale               string               `xml:"PrezzoTotale" json:"PrezzoTotale" validate:"isPrice,min=4,max=21"`
-	AliquotaIVA                string               `xml:"AliquotaIVA" json:"AliquotaIVA" validate:"isIva,isPrice,min=4,max=6"`
-	Ritenuta                   string               `xml:"Ritenuta" json:"Ritenuta" validate:"omitempty,eq=SI"`
-	Natura                     string               `xml:"Natura" json:"Natura" validate:"isNatura"`
-	RiferimentoAmministrazione string               `xml:"RiferimentoAmministrazione" json:"RiferimentoAmministrazione" validate:"max=20"`
-	AltriDatiGestionali        *altriDatiGestionali `xml:"AltriDatiGestionali" json:"AltriDatiGestionali"`
+type DettaglioLinee struct {
+	NumeroLinea                int                    `xml:"NumeroLinea" json:"NumeroLinea" validate:"min=1,max=9999"`
+	TipoCessionePrestazione    string                 `xml:"TipoCessionePrestazione" json:"TipoCessionePrestazione" validate:"isTCP"`
+	CodiceArticolo             []*CodiceArticolo      `xml:"CodiceArticolo" json:"CodiceArticolo"`
+	Descrizione                string                 `xml:"Descrizione" json:"Descrizione" validate:"required,max=1000"`
+	Quantita                   string                 `xml:"Quantita" json:"Quantita" validate:"isPrice,max=21,min=4"`
+	UnitaMisura                string                 `xml:"UnitaMisura" json:"UnitaMisura" validate:"max=10"`
+	DataInizioPeriodo          string                 `xml:"DataInizioPeriodo" json:"DataInizioPeriodo" validate:"isDate"`
+	DataFinePeriodo            string                 `xml:"DataFinePeriodo" json:"DataFinePeriodo" validate:"isDate"`
+	PrezzoUnitario             string                 `xml:"PrezzoUnitario" json:"PrezzoUnitario" validate:"isPrice,min=4,max=21"`
+	ScontoMaggiorazione        []*ScontoMaggiorazione `xml:"ScontoMaggiorazione" json:"ScontoMaggiorazione"`
+	PrezzoTotale               string                 `xml:"PrezzoTotale" json:"PrezzoTotale" validate:"isPrice,min=4,max=21"`
+	AliquotaIVA                string                 `xml:"AliquotaIVA" json:"AliquotaIVA" validate:"isIva,isPrice,min=4,max=6"`
+	Ritenuta                   string                 `xml:"Ritenuta" json:"Ritenuta" validate:"omitempty,eq=SI"`
+	Natura                     string                 `xml:"Natura" json:"Natura" validate:"isNatura"`
+	RiferimentoAmministrazione string                 `xml:"RiferimentoAmministrazione" json:"RiferimentoAmministrazione" validate:"max=20"`
+	AltriDatiGestionali        []*AltriDatiGestionali `xml:"AltriDatiGestionali" json:"AltriDatiGestionali"`
 }
 
-type datiBeniServizi struct {
-	DettaglioLinee []*dettaglioLinee `xml:"DettaglioLinee" json:"DettaglioLinee" `
-	DatiRiepilogo  *datiRiepilogo    `xml:"DatiRiepilogo" json:"DatiRiepilogo"`
+type DatiBeniServizi struct {
+	DettaglioLinee []*DettaglioLinee `xml:"DettaglioLinee" json:"DettaglioLinee" `
+	DatiRiepilogo  []*datiRiepilogo  `xml:"DatiRiepilogo" json:"DatiRiepilogo"`
 }
 
-type datiBollo struct {
+type DatiBollo struct {
 	BolloVirtuale string `xml:"BolloVirtuale" json:"BolloVirtuale" validate:"eq=SI"`
 	ImportoBollo  string `xml:"ImportoBollo" json:"ImportoBollo" validate:"isPrice,max=15"`
 }
 
-type datiCassaPrevidenziale struct {
-	TipoCassa                  string `xml:"TipoCassa" json:"TipoCassa" validate:"oneof=TC01 TC02 TC03 TC04 TC05 TC06 TC07 TC08 TC09 TC10 TC11 TC12 TC13 TC14 TC15 TC16 TC17 TC18 TC19 TC20 TC21 TC22"`
+type DatiCassaPrevidenziale struct {
+	TipoCassa                  string `xml:"TipoCassa" json:"TipoCassa" validate:"isTC"`
 	AlCassa                    string `xml:"AlCassa" json:"AlCassa" validate:"isPrice"`
 	ImportoContributoCassa     string `xml:"ImportoContributoCassa" json:"ImportoContributoCassa" validate:"isPrice,max=15"`
 	ImponibileCassa            string `xml:"ImponibileCassa" json:"ImponibileCassa" validate:"isPrice,max=15"`
@@ -74,7 +78,7 @@ type datiCassaPrevidenziale struct {
 	RiferimentoAmministrazione string `xml:"RiferimentoAmministrazione" json:"RiferimentoAmministrazione" validate:"max=20"`
 }
 
-type dataBlok struct {
+type DatiDocumentiCorrelatiType struct {
 	RiferimentoNumeroLinea    int    `xml:"RiferimentoNumeroLinea" json:"RiferimentoNumeroLinea" validate:"min=0,max=9999"`
 	IDDocumento               string `xml:"IdDocumento" json:"IdDocumento" validate:"max=20"`
 	Data                      string `xml:"Data" json:"Data" validate:"omitempty,isDate"`
@@ -83,75 +87,68 @@ type dataBlok struct {
 	CodiceCUP                 string `xml:"CodiceCUP" json:"CodiceCUP" validate:"max=15"`
 	CodiceCIG                 string `xml:"CodiceCIG" json:"CodiceCIG" validate:"max=15"`
 }
-type datiConvenzione struct{ dataBlok }
-type datiOrdineAcquisto struct{ dataBlok }
-type datiContratto struct{ dataBlok }
-type datiFattureCollegate struct{ dataBlok }
-type datiRicezione struct{ dataBlok }
+type datiConvenzione = DatiDocumentiCorrelatiType
+type datiOrdineAcquisto = DatiDocumentiCorrelatiType
+type datiContratto = DatiDocumentiCorrelatiType
+type datiFattureCollegate = DatiDocumentiCorrelatiType
+type datiRicezione = DatiDocumentiCorrelatiType
 
-type datiDDT struct {
+type DatiDDT struct {
 	NumeroDDT              string `xml:"NumeroDDT" json:"NumeroDDT" validate:"max=20"`
 	DataDDT                string `xml:"DataDDT" json:"DataDTT" validate:"isDate"`
 	RiferimentoNumeroLinea int    `xml:"RiferimentoNumeroLinea" json:"RiferimentoNumeroLinea" validate:"min=0,max=9999"`
 }
 
-type datiGeneraliDocumento struct {
-	//	TD01 Fattura
-	// 	TD02 Acconto/Anticipo su fattura
-	//	TD03  Acconto/Anticipo su parcella
-	//	TD04 Nota di Credito
-	//	TD05 Nota di Debito
-	//	TD06  Parcella
-	//	TD20  Autofattura
+type DatiGeneraliDocumento struct {
 	TipoDocumento          string                  `xml:"TipoDocumento" json:"TipoDocumento" validate:"isTypeDocument"`
 	Divisa                 string                  `xml:"Divisa" json:"Divisa" validate:"len=3"`
 	Data                   string                  `xml:"Data" json:"Data" validate:"isDate"`
 	Numero                 string                  `xml:"Numero" json:"Numero"`
-	DatiRitenuta           *datiRitenuta           `xml:"DatiRitenuta,omitempty" json:"DatiRitenuta,omitempty" validate:"omitempty"`
-	DatiBollo              *datiBollo              `xml:"DatiBollo" json:"DatiBollo" validate:"omitempty"`
-	DatiCassaPrevidenziale *datiCassaPrevidenziale `xml:"DatiCassaPrevidenziale" json:"DatiCassaPrevidenziale" `
-	ScontoMaggiorazione    *scontoMaggiorazione    `xml:"ScontoMaggiorazione" json:"ScontoMaggiorazione" `
+	DatiRitenuta           *DatiRitenuta           `xml:"DatiRitenuta,omitempty" json:"DatiRitenuta,omitempty" validate:"omitempty"`
+	DatiBollo              *DatiBollo              `xml:"DatiBollo" json:"DatiBollo" validate:"omitempty"`
+	DatiCassaPrevidenziale *DatiCassaPrevidenziale `xml:"DatiCassaPrevidenziale" json:"DatiCassaPrevidenziale" `
+	ScontoMaggiorazione    *ScontoMaggiorazione    `xml:"ScontoMaggiorazione" json:"ScontoMaggiorazione" `
 	ImportoTotaleDocumento string                  `xml:"ImportoTotaleDocumento" json:"ImportoTotaleDocumento" validate:"omitempty,isPrice,max=15,min=4"`
 	Arrotondamento         string                  `xml:"Arrotondamento" json:"Arrotondamento" validate:"omitempty,isPrice,max=15,min=4"`
 	Causale                []string                `xml:"Causale" json:"Causale"`
 	Art73                  string                  `xml:"Art73" json:"Art73" validate:"omitempty,eq=SI"`
 }
 
-type datiGenerali struct {
-	DatiGeneraliDocumento *datiGeneraliDocumento `xml:"DatiGeneraliDocumento" json:"DatiGeneraliDocumento"`
+type DatiGenerali struct {
+	DatiGeneraliDocumento *DatiGeneraliDocumento `xml:"DatiGeneraliDocumento" json:"DatiGeneraliDocumento"`
 	DatiOrdineAcquisto    *datiOrdineAcquisto    `xml:"DatiOrdineAcquisto,omitempity" json:"DatiOrdineAcquisto"`
 	DatiContratto         *datiContratto         `xml:"DatiContratto" json:"DatiContratto"`
 	DatiConvenzione       *datiConvenzione       `xml:"DatiConvenzione" json:"DatiConvenzione"`
 	DatiRicezione         *datiRicezione         `xml:"DatiRicezione" json:"DatiRicezione"`
 	DatiFattureCollegate  *datiFattureCollegate  `xml:"DatiFattureCollegate" json:"DatiFattureCollegate"`
-	DatiSAL               *datiSAL               `xml:"DatiSAL" json:"DatiSAL"`
-	DatiDDT               *datiDDT               `xml:"DatiDDT" json:"DatiDDT"`
-	DatiTrasporto         *datiTrasporto         `xml:"DatiTrasporto" json:"DatiTrasporto" validate:"omitempty"`
-	FatturaPrincipale     *fatturaPrincipale     `xml:"FatturaPrincipale" json:"FatturaPrincipale"`
+	DatiSAL               *DatiSAL               `xml:"DatiSAL" json:"DatiSAL"`
+	DatiDDT               *DatiDDT               `xml:"DatiDDT" json:"DatiDDT"`
+	DatiTrasporto         *DatiTrasporto         `xml:"DatiTrasporto" json:"DatiTrasporto" validate:"omitempty"`
+	FatturaPrincipale     *FatturaPrincipale     `xml:"FatturaPrincipale" json:"FatturaPrincipale"`
 }
 
-type datiIVA struct {
+type DatiIVA struct {
 	AliquotaIVA string `xml:"Aliquota" json:"Aliquota" validate:"isIva,isPrice"`
 	Imposta     string `xml:"Imposta" json:"Imposta" validate:"isPrice"`
 }
 
-type datiPagamento struct {
+type DatiPagamento struct {
 	CondizioniPagamento string              `xml:"CondizioniPagamento" json:"CondizioniPagamento" validate:"oneof=TP01 TP02 TP03"`
-	DettaglioPagamento  *dettaglioPagamento `xml:"DettaglioPagamento" json:"DettaglioPagamento"`
+	DettaglioPagamento  *DettaglioPagamento `xml:"DettaglioPagamento" json:"DettaglioPagamento"`
 }
 
-type datiRitenuta struct {
+type DatiRitenuta struct {
 	TipoRitenuta     string `xml:"TipoRitenuta" json:"TipoRitenuta" validate:"oneof=RT01 RT02"`
 	ImportoRitenuta  string `xml:"ImportoRitenuta" json:"ImportoRitenuta" validate:"isPrice,min=4,max=15"`
 	AliquotaRitenuta string `xml:"AliquotaRitenuta" json:"AliquotaRitenuta" validate:"isPrice,min=4,max=6"`
 	CausalePagamento string `xml:"CausalePagamento" json:"CausalePagamento" validate:"oneof=CU ZO M2"`
 }
 
-type datiSAL struct {
+type DatiSAL struct {
 	RiferimentoFase int `xml:"RiferimentoFase" json:"RiferimentoFase" validate:"min=0,max=999"`
 }
 
-type datiTrasporto struct {
+type DatiTrasporto struct {
 	DatiAnagraficiVettore *datiAnagraficiVettore `xml:"DatiAnagraficiVettore" json:"DatiAnagraficiVettore"`
 	MezzoTrasporto        string                 `xml:"MezzoTrasporto" json:"MezzoTrasporto" validate:"omitempty,max=80"`
 	CausaleTrasporto      string                 `xml:"CausaleTrasporto" json:"CausaleTrasporto" validate:"omitempty,max=100"`
@@ -163,47 +160,47 @@ type datiTrasporto struct {
 	DataOraRitiro         string                 `xml:"DataOraRitiro" json:"DataOraRitiro" validate:"omitempty,isDateTime"`
 	DataInizioTrasporto   string                 `xml:"DataInizioTrasporto" json:"DataInizioTrasporto" validate:"omitempty,isDate"`
 	TipoResa              string                 `xml:"TipoResa" json:"TipoResa" validate:"omitempty,len=3,oneof=EXW FCA CPT CIP DAT DAP DDP FAS FOB CFR CIF"`
-	IndirizzoResa         *indirizzoType         `xml:"IndirizzoResa" json:"IndirizzoResa" `
+	IndirizzoResa         *IndirizzoType         `xml:"IndirizzoResa" json:"IndirizzoResa" `
 	DataOraConsegna       string                 `xml:"DataOraConsegna" json:"DataOraConsegna" validate:"isDateTime"`
 }
 
-type datiVeicolo struct {
+type DatiVeicolo struct {
 	Data           string `xml:"Data" json:"Data" validate:"isDate"`
-	TotalePercorso string `xml:"TotalePercorso" json:"TotalePercorso" validate:"max=15"`
+	TotalePercorso string `xml:"TotalePercorso" json:"Tot alePercorso" validate:"max=15"`
 }
 
-type dettaglioPagamento struct {
-	Beneficiario                    string `xml:"Beneficiario" json:"Beneficiario" validate:"max=200"`
-	ModalitaPagamento               string `xml:"ModalitaPagamento" json:"ModalitaPagamento" validate:"oneof=MP01 MP02 MP03 MP04 MP05 MP06 MP07 MP08 MP09 MP10 MP11 MP12 MP13 MP14 MP15 MP16 MP17 MP18 MP19 MP20 MP21 MP22"`
-	DataRiferimentoTerminiPagamento string `xml:"DataRiferimentoTerminiPagamento" json:"DataRiferimentoTerminiPagamento" validate:"omitempty,isDate"`
-	GiorniTerminiPagamento          int    `xml:"GiorniTerminiPagamento" json:"omitempty,GiorniTerminiPagamento" validate:"omitempty,min=0,max=999"`
-	DataScadenzaPagamento           string `xml:"DataScadenzaPagamento" json:"DataScadenzaPagamento" validate:"omitempty,isDate"`
-	ImportoPagamento                string `xml:"ImportoPagamento" json:"ImportoPagamento" validate:"isPrice,min=4,max=15"`
-	CodUfficioPostale               string `xml:"CodUfficioPostale" json:"CodUfficioPostale" validate:"omitempty,max=20"`
-	CFQuietanzante                  string `xml:"CFQuietanzante" json:"CFQuietanzante" validate:"omitempty,max=16"`
-	NomeQuietanzante                string `xml:"NomeQuietanzante" json:"NomeQuietanzante" validate:"omitempty,max=60"`
-	CognomeQuietanzante             string `xml:"CognomeQuietanzante" json:"CognomeQuietanzante" validate:"omitempty,max=60"`
-	TitoloQuietanzante              string `xml:"TitoloQuietanzante" json:"TitoloQuietanzante" validate:"omitempty,max=10,min=2"`
-	IstitutoFinanziario             string `xml:"IstitutoFinanziario" json:"IstitutoFinanziario" validate:"omitempty,max=80"`
+type DettaglioPagamento struct {
+	Beneficiario                    string  `xml:"Beneficiario" json:"Beneficiario" validate:"max=200"`
+	ModalitaPagamento               string  `xml:"ModalitaPagamento" json:"ModalitaPagamento" validate:"oneof=MP01 MP02 MP03 MP04 MP05 MP06 MP07 MP08 MP09 MP10 MP11 MP12 MP13 MP14 MP15 MP16 MP17 MP18 MP19 MP20 MP21 MP22"`
+	DataRiferimentoTerminiPagamento string  `xml:"DataRiferimentoTerminiPagamento" json:"DataRiferimentoTerminiPagamento" validate:"omitempty,isDate"`
+	GiorniTerminiPagamento          int     `xml:"GiorniTerminiPagamento" json:"omitempty,GiorniTerminiPagamento" validate:"omitempty,min=0,max=999"`
+	DataScadenzaPagamento           string  `xml:"DataScadenzaPagamento" json:"DataScadenzaPagamento" validate:"omitempty,isDate"`
+	ImportoPagamento                float32 `xml:"ImportoPagamento" json:"ImportoPagamento" validate:"isPrice,min=4,max=15"`
+	CodUfficioPostale               string  `xml:"CodUfficioPostale" json:"CodUfficioPostale" validate:"omitempty,max=20"`
+	CognomeQuietanzante             string  `xml:"CognomeQuietanzante" json:"CognomeQuietanzante" validate:"omitempty,max=60"`
+	NomeQuietanzante                string  `xml:"NomeQuietanzante" json:"NomeQuietanzante" validate:"omitempty,max=60"`
+	CFQuietanzante                  string  `xml:"CFQuietanzante" json:"CFQuietanzante" validate:"omitempty,max=16"`
+	TitoloQuietanzante              string  `xml:"TitoloQuietanzante" json:"TitoloQuietanzante" validate:"omitempty,max=10,min=2"`
+	IstitutoFinanziario             string  `xml:"IstitutoFinanziario" json:"IstitutoFinanziario" validate:"omitempty,max=80"`
 
 	IBAN string `xml:"IBAN" json:"IBAN" validate:"omitempty,min=15,max=34,required_with_all=ABI CAB BIC"`
 	ABI  string `xml:"ABI" json:"ABI" validate:"omitempty,len=5,required_with_all=IBAN CAB BIC"`
 	CAB  string `xml:"CAB" json:"CAB" validate:"omitempty,len=5,required_with_all=ABI IBAN BIC"`
 	BIC  string `xml:"BIC" json:"BIC" validate:"omitempty,min=8,max=11,required_with_all=ABI CAB IBAN"`
 
-	ScontoPagamentoAnticipato     string `xml:"ScontoPagamentoAnticipato" json:"ScontoPagamentoAnticipato" validate:"omitempty,isPrice,min=4,max=15"`
-	DataLimitePagamentoAnticipato string `xml:"DataLimitePagamentoAnticipato" json:"DataLimitePagamentoAnticipato" validate:"omitempty,isDate"`
-	PenalitaPagamentiRitardati    string `xml:"PenalitaPagamentiRitardati" json:"PenalitaPagamentiRitardati" validate:"omitempty,isPrice,min=4,max=15"`
-	DataDecorrenzaPenale          string `xml:"DataDecorrenzaPenale" json:"DataDecorrenzaPenale" validate:"omitempty,isDate"`
-	CodicePagamento               string `xml:"CodicePagamento" json:"CodicePagamento" validate:"max=60"`
+	ScontoPagamentoAnticipato     float32 `xml:"ScontoPagamentoAnticipato" json:"ScontoPagamentoAnticipato" validate:"omitempty"`
+	DataLimitePagamentoAnticipato string  `xml:"DataLimitePagamentoAnticipato" json:"DataLimitePagamentoAnticipato" validate:"omitempty,isDate"`
+	PenalitaPagamentiRitardati    float32 `xml:"PenalitaPagamentiRitardati" json:"PenalitaPagamentiRitardati" validate:"omitempty"`
+	DataDecorrenzaPenale          string  `xml:"DataDecorrenzaPenale" json:"DataDecorrenzaPenale" validate:"omitempty,isDate"`
+	CodicePagamento               string  `xml:"CodicePagamento" json:"CodicePagamento" validate:"max=60"`
 }
 
-type fatturaPrincipale struct {
+type FatturaPrincipale struct {
 	NumeroFatturaPrincipale string `xml:"NumeroFatturaPrincipale" json:"NumeroFatturaPrincipale" validate:"max=20"`
 	DataFatturaPrincipale   string `xml:"DataFatturaPrincipale" json:"DataFatturaPrincipale" validate:"isDate"`
 }
 
-type scontoMaggiorazione struct {
+type ScontoMaggiorazione struct {
 	Tipo        string  `xml:"Tipo" json:"Tipo" validate:"oneof=SC MG"`
 	Percentuale float32 `xml:"Percentuale" json:"Percentuale"`
 	Importo     float32 `xml:"Importo" json:"Importo"`
@@ -211,11 +208,11 @@ type scontoMaggiorazione struct {
 
 //FatturaElettronicaBody represents the body of an electronic invoice in all its parts
 type FatturaElettronicaBody struct {
-	DatiGenerali    *datiGenerali    `xml:"DatiGenerali" json:"DatiGenerali"`
-	DatiBeniServizi *datiBeniServizi `xml:"DatiBeniServizi" json:"DatiBeniServizi"`
-	DatiVeicolo     *datiVeicolo     `xml:"DatiVeicolo" json:"DatiVeicolo"`
-	DatiPagamento   *datiPagamento   `xml:"DatiPagamento" json:"DatiPagamento"`
-	Allegati        []*allegati      `xml:"Allegati" json:"Allegati" validate:"dive"`
+	DatiGenerali    *DatiGenerali    `xml:"DatiGenerali" json:"DatiGenerali"`
+	DatiBeniServizi *DatiBeniServizi `xml:"DatiBeniServizi" json:"DatiBeniServizi"`
+	DatiVeicolo     *DatiVeicolo     `xml:"DatiVeicolo" json:"DatiVeicolo"`
+	DatiPagamento   *DatiPagamento   `xml:"DatiPagamento" json:"DatiPagamento"`
+	Allegati        []*Allegati      `xml:"Allegati" json:"Allegati" validate:"dive"`
 }
 
 // Validate Valid the body of the invoice Italian Electronics

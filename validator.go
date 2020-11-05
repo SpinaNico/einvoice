@@ -13,32 +13,41 @@ import (
 func Validator() *validator.Validate {
 	var validate *validator.Validate
 	validate = validator.New()
-	validate.RegisterValidation("isInteger", isInteger)
+	//	validate.RegisterValidation("isInteger", isInteger)
 	validate.RegisterValidation("isDate", isDate)
-	validate.RegisterValidation("isPrice", isPrice)
-	validate.RegisterValidation("isTypeDocument", isTypeDocument)
+	//	validate.RegisterValidation("isPrice", isPrice)
 	validate.RegisterValidation("isntSDIPec", isntSDIPec)
-	validate.RegisterValidation("isNatura", isNatura)
 	validate.RegisterValidation("isDateTime", isDateTime)
-	validate.RegisterValidation("isIva", isIva)
+	//validate.RegisterValidation("isIva", isIva)
 	validate.RegisterValidation("isMP", isMP)
 	validate.RegisterValidation("isRF", isRF)
+	validate.RegisterValidation("isTD", isTD)
+	validate.RegisterValidation("isNatura", isN)
 	validate.RegisterStructValidation(datiTrasmissioneValidate, datiTrasmissione{})
 	validate.RegisterStructValidation(cessionarioCommittenteValidate, CessionarioCommittente{})
-	validate.RegisterStructValidation(validateDatiBeniServizi, datiBeniServizi{})
+	validate.RegisterStructValidation(validateDatiBeniServizi, DatiBeniServizi{})
 	return validate
 }
 
-func isRF(rf validator.FieldLevel) bool {
-	RF := rf.Field().String()
-
-	for key, _ := range RegimeFiscale {
-		if RF == key {
-			return false
+func makeValidatorWithMap(mapped map[string]string) func(validator.FieldLevel) bool {
+	return func(in validator.FieldLevel) bool {
+		data := in.Field().String()
+		for key, _ := range mapped {
+			if data == key {
+				return false
+			}
 		}
+		return true
 	}
-	return true
+
 }
+
+var isTC = makeValidatorWithMap(TipoCassa)
+var isRF = makeValidatorWithMap(RegimeFiscale)
+var isN = makeValidatorWithMap(Natura)
+var isMP = makeValidatorWithMap(MetodiPagamento)
+var isTCP = makeValidatorWithMap(TipoCessionePrestazione)
+var isTD = makeValidatorWithMap(TipoDocumento)
 
 // control id Field is Integer
 func isInteger(t validator.FieldLevel) bool {
@@ -51,9 +60,9 @@ func isInteger(t validator.FieldLevel) bool {
 
 //Check the data hold block, which must be filled in case of DatiCassaPrevidenziale.Ritenuta == "SI"
 func checkDatiRitenuta(d validator.StructLevel) {
-	data := d.Current().Interface().(datiGeneraliDocumento)
+	data := d.Current().Interface().(DatiGeneraliDocumento)
 	if data.DatiCassaPrevidenziale.Ritenuta == "SI" {
-		if *data.DatiRitenuta == (datiRitenuta{}) {
+		if *data.DatiRitenuta == (DatiRitenuta{}) {
 			d.ReportError(data.DatiRitenuta, "struct", "all", "required", "")
 		} else {
 			validate := Validator()
@@ -92,52 +101,12 @@ func isDate(field validator.FieldLevel) bool {
 
 // validate format: YYYY-MM-DDTHH:MM:SS.
 func isDateTime(field validator.FieldLevel) bool {
-
+	data := field.Field().String()
+	_, err := time.Parse(`2006-01-02T15:04:05`, data)
+	if err != nil {
+		return false
+	}
 	return true
-}
-
-func isNatura(field validator.FieldLevel) bool {
-	c := field.Field().String()
-
-	for key, _ := range NatureWithDescription {
-		if key == c {
-			return true
-		}
-	}
-	return false
-}
-
-func isMP(field validator.FieldLevel) bool {
-	c := field.Field().String()
-
-	for key, _ := range MethodsPayments {
-		if key == c {
-			return true
-		}
-	}
-	return false
-}
-
-func isTCP(field validator.FieldLevel) bool {
-	c := field.Field().String()
-
-	for key, _ := range EnumTipoCessionePrestazione {
-		if key == c {
-			return true
-		}
-	}
-	return false
-}
-
-func isTypeDocument(field validator.FieldLevel) bool {
-	c := field.Field().String()
-
-	for key, _ := range TypeDocument {
-		if key == c {
-			return true
-		}
-	}
-	return false
 }
 
 func isntSDIPec(field validator.FieldLevel) bool {
@@ -154,6 +123,5 @@ func isIva(field validator.FieldLevel) bool {
 		log.Println("ERROR: ", err)
 		return true
 	}
-
 	return false
 }

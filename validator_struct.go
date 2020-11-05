@@ -7,7 +7,7 @@ import (
 )
 
 func validateCodiceArticolo(d validator.StructLevel) {
-	data := d.Current().Interface().(codiceArticolo)
+	data := d.Current().Interface().(CodiceArticolo)
 	/*
 		CodiceValore: valore del codice articolo corrispondente alla tipologia. Se l’elemento CodiceTipo è uguale a “CARB”, l’elemento CodiceValore deve contenere uno dei seguenti codici:
 		- “27101245” (per vendita di Benzina senza piombo ottani => 95 e < 98);
@@ -51,7 +51,7 @@ func cessionarioCommittenteValidate(d validator.StructLevel) {
 	} else if data.Sede.Nazione != "IT" {
 
 		if data.StabileOrganizzazione != nil {
-			if *data.StabileOrganizzazione == (indirizzoType{}) {
+			if *data.StabileOrganizzazione == (IndirizzoType{}) {
 				d.ReportError(data.StabileOrganizzazione, "StabileOrganizzazione", "", "required", "")
 			} else {
 				if data.StabileOrganizzazione.Nazione != "IT" {
@@ -65,7 +65,7 @@ func cessionarioCommittenteValidate(d validator.StructLevel) {
 }
 
 func validateDatiBeniServizi(d validator.StructLevel) {
-	data := d.Current().Interface().(datiBeniServizi)
+	data := d.Current().Interface().(DatiBeniServizi)
 	for _, linea := range data.DettaglioLinee {
 		if linea.NumeroLinea == 0 {
 			d.ReportError(linea.NumeroLinea, "NumeroLinea", "", "required", "")

@@ -3,7 +3,7 @@ package einvoice
 import "fmt"
 
 type datiTrasmissione struct {
-	IDTrasmittente *iDFiscaleIVA `xml:"IdTrasmittente" json:"IdTrasmittente" validate:"required"`
+	IDTrasmittente *IDFiscaleIVA `xml:"IdTrasmittente" json:"IdTrasmittente" validate:"required"`
 	//ProgressivoInvio: progressivo che il soggetto trasmittente attribuisce
 	//al file che inoltra al Sistema di Interscambio per una propria finalità di
 	//identificazione univoca.
@@ -44,8 +44,8 @@ type datiTrasmissione struct {
 // Trovi descrizioni nella sezione 2.2.4.1 Dati Anagrafici
 type datiAnagrafici struct {
 	CodiceFiscale string        `xml:"CodiceFiscale" json:"CodiceFiscale" validate:"omitempty,min=11,max=16"`
-	Anagrafica    *anagrafica   `xml:"Anagrafica" json:"Anagrafica"`
-	IDFiscaleIVA  *iDFiscaleIVA `xml:"IdFiscaleIVA" json:"IdFiscaleIVA"`
+	Anagrafica    *Anagrafica   `xml:"Anagrafica" json:"Anagrafica"`
+	IDFiscaleIVA  *IDFiscaleIVA `xml:"IdFiscaleIVA" json:"IdFiscaleIVA"`
 
 	// AlboProfessionale: formato alfanumerico; lunghezza massima di 60 caratteri.
 	AlboProfessionale string `xml:"AlboProfessionale" json:"AlboProfessionale" validate:"omitempty,max=60"`
@@ -74,7 +74,7 @@ type contattiTrasmittente struct {
 // CedentePrestatore rappresent your company
 type CedentePrestatore struct {
 	DatiAnagrafici *datiAnagrafici `xml:"DatiAnagrafici" json:"DatiAnagrafici"`
-	Sede           *indirizzoType  `xml:"Sede" json:"Sede"`
+	Sede           *IndirizzoType  `xml:"Sede" json:"Sede"`
 	Contatti       *contatti       `xml:"Contatti" json:"Contatti"`
 }
 
@@ -85,23 +85,23 @@ type CedentePrestatore struct {
 // CessionarioCommittente this struct rappresent client/customers
 type CessionarioCommittente struct {
 	DatiAnagrafici *datiAnagrafici `xml:"DatiAnagrafici" json:"DatiAnagrafici"`
-	Sede           *indirizzoType  `xml:"Sede" json:"Sede"`
+	Sede           *IndirizzoType  `xml:"Sede" json:"Sede"`
 
 	// Da valorizzare solo se il cessionario non è un residente
 	// quindi per l'operazione deve obbligatoriamente indicare uno stabile
 	// in questa struttura deve indicare lo stabile (che risiede nel territorio italiano)
-	StabileOrganizzazione *indirizzoType         `xml:"StabileOrganizzazione" json:"StabileOrganizzazione"`
+	StabileOrganizzazione *IndirizzoType         `xml:"StabileOrganizzazione" json:"StabileOrganizzazione"`
 	RappresentanteFiscale *rappresentanteFiscale `xml:"RappresentanteFiscale" json:"RappresentanteFiscale"`
 }
 
 type rappresentanteFiscale struct {
-	anagrafica
-	IDFiscaleIva *iDFiscaleIVA `xml:"IdFiscaleIVA" json:"IdFiscaleIVA"`
+	Anagrafica
+	IDFiscaleIva *IDFiscaleIVA `xml:"IdFiscaleIVA" json:"IdFiscaleIVA"`
 }
 type terzoIntermediarioOSoggettoEmittente struct {
-	IDFiscaleIVA  *iDFiscaleIVA `xml:"IdFiscaleIVA" json:"IdFiscaleIVA"`
+	IDFiscaleIVA  *IDFiscaleIVA `xml:"IdFiscaleIVA" json:"IdFiscaleIVA"`
 	CodiceFiscale string        ` xml:"CodiceFiscale" json:"CodiceFiscale" validate:"omitempty,min=11,max=16"`
-	Anagrafica    *anagrafica   `xml:"Anagrafica" json:"Anagrafica"`
+	Anagrafica    *Anagrafica   `xml:"Anagrafica" json:"Anagrafica"`
 }
 
 //FatturaElettronicaHeader A tree of structures that represents the Header of an Italian electronic bill
