@@ -10,7 +10,7 @@ type Anagrafica struct {
 
 type IDFiscaleIVA struct {
 	IDPaese  string `xml:"IdPaese" json:"IdPaese" validate:"len=2"`
-	IDCodice string `xml:"IdCodice" json:"IdCodice" validate:"max=28"`
+	IDCodice string `xml:"IdCodice" json:"IdCodice" validate:"max=28,isPIVA"`
 }
 
 type IndirizzoType struct {

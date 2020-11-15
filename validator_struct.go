@@ -1,10 +1,47 @@
 package einvoice
 
 import (
-	"strconv"
+	"fmt"
 
 	"gopkg.in/go-playground/validator.v9"
 )
+
+func registerAllValidatorStructLevel(validate *validator.Validate) {
+	validate.RegisterStructValidation(datiTrasmissioneValidate, datiTrasmissione{})
+	validate.RegisterStructValidation(validateCessionarioCommitente, CessionarioCommittente{})
+	validate.RegisterStructValidation(validateDatiBeniServizi, DatiBeniServizi{})
+	validate.RegisterStructValidation(validateDatiCassaPrevidenziale, DatiCassaPrevidenziale{})
+	validate.RegisterStructValidation(validateFatturaElettronicaBody, FatturaElettronicaBody{})
+}
+
+func validateFatturaElettronicaBody(d validator.StructLevel) {
+	data := d.Current().Interface().(FatturaElettronicaBody)
+
+	if data.DatiBeniServizi != nil {
+		for _, linea := range data.DatiBeniServizi.DettaglioLinee {
+			if linea.Ritenuta == "SI" {
+				if len(data.DatiGenerali.DatiGeneraliDocumento.DatiRitenuta) == 0 {
+					// ERROR 00411
+					d.ReportError(linea.Ritenuta, "DatiBeniServizi", "Ritenuta", ritenutaSiWithoutDatiRitenuta, linea.Ritenuta)
+				}
+			}
+		}
+	}
+
+	if data.DatiGenerali != nil {
+		if data.DatiGenerali.DatiGeneraliDocumento != nil {
+			if data.DatiGenerali.DatiGeneraliDocumento.DatiCassaPrevidenziale != nil {
+				if data.DatiGenerali.DatiGeneraliDocumento.DatiCassaPrevidenziale.Ritenuta == "SI" {
+					if len(data.DatiGenerali.DatiGeneraliDocumento.DatiRitenuta) == 0 {
+						// ERROR 00415
+						d.ReportError("DatiCassaPrevidenziale", "DatiCassaPrevidenziale", "Ritenuta", ritenutaSiWithoutDatiRitenuta, "")
+					}
+				}
+			}
+		}
+	}
+
+}
 
 func validateCodiceArticolo(d validator.StructLevel) {
 	data := d.Current().Interface().(CodiceArticolo)
@@ -43,11 +80,11 @@ func datiTrasmissioneValidate(d validator.StructLevel) {
 // if the person making the invoice is a foreigner, the Italian office must be indicated.
 // This validator also checks whether the Stabile Organization is in the
 // Italian territory so the Nation value is "IT"
-func cessionarioCommittenteValidate(d validator.StructLevel) {
+func validateCessionarioCommitente(d validator.StructLevel) {
 
 	data := d.Current().Interface().(CessionarioCommittente)
 	if data.Sede == nil {
-		d.ReportError(data.Sede, "Sede", "cessionarioCommittenteValidate", "required", "")
+		d.ReportError(data.Sede, "Sede", "validateCessionarioCommitente", "required", "")
 	} else if data.Sede.Nazione != "IT" {
 
 		if data.StabileOrganizzazione != nil {
@@ -62,21 +99,83 @@ func cessionarioCommittenteValidate(d validator.StructLevel) {
 			d.ReportError(data.StabileOrganizzazione, "StabileOrganizzazione", "", "required", "")
 		}
 	}
+
+	if data.DatiAnagrafici != nil {
+		if data.DatiAnagrafici.IDFiscaleIVA != nil {
+			if data.DatiAnagrafici.IDFiscaleIVA.IDCodice == "" && data.DatiAnagrafici.CodiceFiscale == "" {
+				d.ReportError("", "DatiAnagrafici", "", notExistsFiscalID, "")
+			}
+		} else if data.DatiAnagrafici.CodiceFiscale == "" {
+			d.ReportError("", "DatiAnagrafici", "", notExistsFiscalID, "")
+		}
+	} else {
+		d.ReportError("", "DatiAnagrafici", "", notExistsFiscalID, "")
+	}
+
+}
+
+type aliquote struct {
+	value  float64
+	nature string
 }
 
 func validateDatiBeniServizi(d validator.StructLevel) {
 	data := d.Current().Interface().(DatiBeniServizi)
+	aliquotes := []*aliquote{}
 	for _, linea := range data.DettaglioLinee {
 		if linea.NumeroLinea == 0 {
 			d.ReportError(linea.NumeroLinea, "NumeroLinea", "", "required", "")
 		}
 
-		v, _ := strconv.ParseFloat(linea.AliquotaIVA, 32)
-
-		if v == 0 {
+		if linea.AliquotaIVA == 0 {
 			if linea.Natura == "" {
-				d.ReportError(linea.NumeroLinea, "NumeroLinea", "", ivaZeroNatureWrong, "")
+				d.ReportError("DatiBeniServizi", "DatiBeniServizi", "", ivaZeroNatureWrong, "")
+			}
+		} else {
+			if linea.Natura != "" {
+				d.ReportError("DatiBeniServizi", "DatiBeniServizi", "", ivaNotZeroNaturePresent, "")
+			}
+		}
+		var ok = false
+		for _, a := range aliquotes {
+			if fmt.Sprintf("%.2f", a.value) == fmt.Sprintf("%.2f", linea.AliquotaIVA) {
+				ok = true
+				if linea.AliquotaIVA == 0 {
+					if a.nature != linea.Natura {
+						ok = false
+					}
+				}
+			}
+		}
+		if ok == false {
+			aliquotes = append(aliquotes, &aliquote{value: linea.AliquotaIVA, nature: linea.Natura})
+		}
+		ok = false
+		for _, a := range aliquotes {
+			for _, r := range data.DatiRiepilogo {
+				if r.AlliquotaIVA == a.value && r.Natura == a.nature {
+					ok = true
+				}
+			}
+			if ok == false {
+				d.ReportError("", "DatiRiepilogo", "DatiBeniServizi", aliquoteNotOk, fmt.Sprintf("%v", a))
 			}
 		}
 	}
+
+}
+
+func validateDatiCassaPrevidenziale(d validator.StructLevel) {
+	data := d.Current().Interface().(DatiCassaPrevidenziale)
+
+	if data.AliquotaIVA == 0 {
+		if data.Natura == "" {
+			d.ReportError("DatiCassaPrevidenziale", "DatiCassaPrevidenziale", "", ivaZeroNatureWrong, "")
+		}
+	} else {
+		if data.Natura != "" {
+			d.ReportError("DatiCassaPrevidenziale", "DatiCassaPrevidenziale", "", ivaNotZeroNaturePresent, "")
+		}
+	}
+
 }

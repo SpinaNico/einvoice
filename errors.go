@@ -10,13 +10,37 @@ import (
 	"gopkg.in/go-playground/validator.v9"
 )
 
-type SDIErrorSingle struct {
+const ErrorLen = "Lunghezza Sbagliata"
+const ErrorCharacterWrong = "Caratteri non validi"
+const ErrorCharacterController = "Carattere Di Controllo Non Valido"
+
+const ivaZeroNatureWrong = "ivaZeroNatureWrong"
+const ivaNotZeroNaturePresent = "ivaNotZeroNaturePresent"
+const carbWrongArticleCode = "carbWrongArticle"
+const notExistsFiscalID = "notExistsFiscalID"
+const ritenutaSiWithoutDatiRitenuta = "ritenutaSiWithoutDatiRitenuta"
+const aliquoteNotOk = "aliquoteNotOk"
+
+type SDIError struct {
 	Code  string `json:"code" xml:"code"`
 	Error string `json:"error" xml:"error"`
 }
 
+func NewErrorSDI(code string) *SDIError {
+
+	if _, ok := ErrorsMap[code]; ok == false {
+		panic(fmt.Sprintf(`
+		Questo codice errore: "%s" non esiste (%v)
+		`, code, ErrorsMap[code]))
+	}
+	return &SDIError{
+		Code:  code,
+		Error: ErrorsMap[code],
+	}
+}
+
 type SDIErrors struct {
-	Errors []*SDIErrorSingle
+	Errors []*SDIError
 }
 
 func (e *SDIErrors) Error() string {
@@ -37,8 +61,16 @@ func (e *SDIErrors) GetCodes() []string {
 	}
 	return ss
 }
+func (e *SDIErrors) ErrorCodeIsPresent(code string) bool {
+	for _, v := range e.Errors {
+		if v.Code == code {
+			return true
+		}
+	}
+	return false
+}
 
-func (e *SDIErrors) addErrors(err error) {
+func (e *SDIErrors) errorsSwitch(err error) {
 
 	if err != nil {
 		if reflect.TypeOf(err) == reflect.TypeOf(validator.ValidationErrors{}) {
@@ -46,34 +78,72 @@ func (e *SDIErrors) addErrors(err error) {
 
 				switch err.Tag() {
 				case "isntSDIPec":
-					e.Errors = append(e.Errors, &SDIErrorSingle{Code: "00330", Error: ErrorsMap["00330"]})
+					e.Errors = append(e.Errors, NewErrorSDI("00330"))
 					break
-				case "ivaZeroNatureWrong":
-
+				case ivaZeroNatureWrong:
+					if err.Field() == "DatiBeniServizi" {
+						e.Errors = append(e.Errors, NewErrorSDI("00400"))
+					} else if err.Field() == "DatiCassaPrevidenziale" {
+						e.Errors = append(e.Errors, NewErrorSDI("00413"))
+					}
+				case ivaNotZeroNaturePresent:
+					println(err.Field())
+					if err.Field() == "DatiBeniServizi" {
+						e.Errors = append(e.Errors, NewErrorSDI("00401"))
+					} else if err.Field() == "DatiCassaPrevidenziale" {
+						e.Errors = append(e.Errors, NewErrorSDI("00414"))
+					}
+				case "noFuture":
+					e.Errors = append(e.Errors, NewErrorSDI("00403"))
+				case notExistsFiscalID:
+					e.Errors = append(e.Errors, NewErrorSDI("00417"))
+				case ritenutaSiWithoutDatiRitenuta:
+					if err.Field() == "DatiBeniServizi" {
+						e.Errors = append(e.Errors, NewErrorSDI("00411"))
+					} else if err.Field() == "DatiCassaPrevidenziale" {
+						e.Errors = append(e.Errors, NewErrorSDI("00415"))
+					}
 				default:
-					e.Errors = append(e.Errors, &SDIErrorSingle{Code: randomString(), Error: translateSDI(err)})
+					e.Errors = append(e.Errors, &SDIError{Code: randomString(), Error: translateSDI(err)})
 				}
 			}
 		} else {
-
-			e.Errors = append(e.Errors, &SDIErrorSingle{Code: "???", Error: err.Error()})
-
+			e.Errors = append(e.Errors, &SDIError{Code: "???", Error: err.Error()})
 		}
 	}
 
 }
 
+func translateSDI(err validator.FieldError) string {
+
+	switch err.Tag() {
+	case "required":
+		return fmt.Sprintf("Questo campo %s è richiesto ", err.Field())
+	default:
+		return fmt.Sprintf("Questo campo \"%s\" non è valido per questo tag %s", err.Field(), err.Tag())
+	}
+
+}
+
+func randomString() string {
+	const charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
+
+	var seededRand *rand.Rand = rand.New(
+		rand.NewSource(time.Now().UnixNano()))
+
+	b := make([]byte, 4)
+	for i := range b {
+		b[i] = charset[seededRand.Intn(len(charset))]
+	}
+
+	return fmt.Sprintf("?%s", string(b))
+}
+
+// Raccolta di tutti gli errori SDI
 var ErrorsMap = map[string]string{
 
-	// sdi errors plus
-	"A0001": "Le prime due lettere del nome file devono seguire lo standard   ISO 3166-1 alpha-2 code, inoltre devono essere maiuscole.",
-	"A0002": "il nome fattura non è conforme secondo le regole di fatturazione per la versione 1.6/1.5 ",
-
-	"A0003": "Non puoi passarmi una fattura senza nessun body",
-
 	"00330": "l’indirizzo PEC indicato nel campo PECDestinatario  corrisponde ad una casella PEC del SdI",
-	"00413": "AliquotaIVA è zero, ma non è stata definita la natura",
-	"00415": "L'elemento Ritenuta è stato valorizzato con SI, ma non è presente il blocco DatiRitenuta.",
+	"00415": "DatiCassaPrevidenziale - L'elemento Ritenuta è stato valorizzato con SI, ma non è presente il blocco DatiRitenuta.",
 	"00001": "Nome file non valido",
 	"00002": "Nome file duplicato",
 	"00404": "E’ stato già trasmesso un file con identico contenuto",
@@ -102,6 +172,13 @@ var ErrorsMap = map[string]string{
 			(se nei dati di riepilogo l’aliquota IVA risulta essere diversa da zero:
 			o in caso di DTE la natura dell’operazione non deve essere
 			valorizzata; o in caso di DTR l’unica natura compatibile con l’operazione può essere N6)`,
+	"00403": `La data nel documento è futura al momento che SDI riceverà il messaggio`,
+	"00411": "Hai valorizzato un dettaglioLinee in benieServizi con valore Ritenuta=SI ma non è presente il blocco DatiRitenuta obbligatorio",
+	"00413": "Nella cassaPrevidenziale, non è presente la natura a fronte di una Aliquota 0",
+	"00414": "Nalla cassaPrevidenziale, viene indicata la natura ma l'aliquota non è zero",
+
+	"00417": "Non è presente un identificativo fiscale PIVA o CF",
+	"00419": "DatiRiepilogo non presente in corrisponspondenza del blocco AliquotaIVA, per ogni AliquotaIVa deve essere presente il suo DatiRiepilogo, solo fatture ordinarie",
 	"00420": `A fronte di EsigibilitaIVA uguale a S (Split-Payment), per
 			Natura è stato indicato il valore N6
 			(una operazione con natura N6 non può prevedere una modalità di
@@ -141,7 +218,7 @@ var ErrorsMap = map[string]string{
 			(uno stesso importo non può essere riferito a spese che siano
 			contemporaneamente deducibili e detraibili)`,
 	"00436": `DataRegistrazione antecedente alla data del documento
-			(la data di registrazione di un documento indicata nel file di tipo DTR non
+			(la data di registrazione di un documento indicata nel file di tipo DTR non 
 			può risultare anteriore alla data del documento stesso; questo controllo
 			viene effettuato anche nel caso di tipo documento uguale a TD12 ma solo
 			se presente il campo 3.2.3.1.2 <Data>)`,
@@ -228,8 +305,10 @@ var ErrorsMap = map[string]string{
 	"00303": "La partita IVA del Rappresentante Fiscale non è valida",
 	"00305": "La partita IVA del Cessionario/Committente non è valida",
 	"00306": "Il Codice Fiscale del Cessionario/Committente non è valido",
+	"00320": "Il codice fiscale, non fa parte del gruppo IVA indicato",
 	"00321": `In presenza di una partita IVA di gruppo IVA del Cedente/Prestatore occorre valorizzare il Codice Fiscale del 
 			Cedente/Prestatore con quello del soggetto partecipante al gruppo`,
+	"00322": "Il codice fiscale è presente ma non è partecipe al gruppo IVA",
 	"00325": `In presenza di una partita IVA di gruppo IVA del
 			Cessionario/Committente occorre valorizzare il Codice Fiscale del
 			Cessionario/Committente con quello del soggetto partecipante al gruppo`,
@@ -250,29 +329,4 @@ var ErrorsMap = map[string]string{
 			ultimo stabilito per l’invio dei dati fattura relativi al periodo di riferimento,
 			presenta il campo DataRegistrazione antecedente al termine iniziale del
 			periodo stesso)`,
-}
-
-func translateSDI(err validator.FieldError) string {
-
-	switch err.Tag() {
-	case "required":
-		return fmt.Sprintf("Questo campo %s è richiesto ", err.Field())
-	default:
-		return fmt.Sprintf("Questo campo \"%s\" non è valido per questo tag %s", err.Field(), err.Tag())
-	}
-
-}
-
-func randomString() string {
-	const charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
-
-	var seededRand *rand.Rand = rand.New(
-		rand.NewSource(time.Now().UnixNano()))
-
-	b := make([]byte, 4)
-	for i := range b {
-		b[i] = charset[seededRand.Intn(len(charset))]
-	}
-
-	return fmt.Sprintf("?%s", string(b))
 }

@@ -1,7 +1,5 @@
 package einvoice
 
-import "fmt"
-
 type datiTrasmissione struct {
 	IDTrasmittente *IDFiscaleIVA `xml:"IdTrasmittente" json:"IdTrasmittente" validate:"required"`
 	//ProgressivoInvio: progressivo che il soggetto trasmittente attribuisce
@@ -43,7 +41,7 @@ type datiTrasmissione struct {
 
 // Trovi descrizioni nella sezione 2.2.4.1 Dati Anagrafici
 type datiAnagrafici struct {
-	CodiceFiscale string        `xml:"CodiceFiscale" json:"CodiceFiscale" validate:"omitempty,min=11,max=16"`
+	CodiceFiscale string        `xml:"CodiceFiscale" json:"CodiceFiscale" validate:"omitempty,min=11,max=16,isCF"`
 	Anagrafica    *Anagrafica   `xml:"Anagrafica" json:"Anagrafica"`
 	IDFiscaleIVA  *IDFiscaleIVA `xml:"IdFiscaleIVA" json:"IdFiscaleIVA"`
 
@@ -100,7 +98,7 @@ type rappresentanteFiscale struct {
 }
 type terzoIntermediarioOSoggettoEmittente struct {
 	IDFiscaleIVA  *IDFiscaleIVA `xml:"IdFiscaleIVA" json:"IdFiscaleIVA"`
-	CodiceFiscale string        ` xml:"CodiceFiscale" json:"CodiceFiscale" validate:"omitempty,min=11,max=16"`
+	CodiceFiscale string        ` xml:"CodiceFiscale" json:"CodiceFiscale" validate:"omitempty,min=11,max=16,isCF"`
 	Anagrafica    *Anagrafica   `xml:"Anagrafica" json:"Anagrafica"`
 }
 
@@ -112,13 +110,4 @@ type FatturaElettronicaHeader struct {
 	CessionarioCommittente               *CessionarioCommittente               `xml:"CessionarioCommittente" json:"CessionarioCommittente"`
 	TerzoIntermediarioOSoggettoEmittente *terzoIntermediarioOSoggettoEmittente `xml:"TerzoIntermediarioOSoggettoEmittente" json:"TerzoIntermediarioOSoggettoEmittente" validate:"omitempty"`
 	SoggettoEmittente                    string                                `xml:"SoggettoEmittente" json:"SoggettoEmittente" validate:"omitempty,len=2,oneof=CC CZ"`
-}
-
-// Validate Check the correctness of the header according to Italian SDi
-func (v FatturaElettronicaHeader) Validate() error {
-	validate := Validator()
-	if err := validate.Struct(v); err != nil {
-		return fmt.Errorf("FatturaElettronicaHeader %s", err)
-	}
-	return nil
 }

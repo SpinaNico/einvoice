@@ -1,7 +1,6 @@
 package einvoice
 
 import (
-	"fmt"
 	"log"
 	"regexp"
 	"strconv"
@@ -10,7 +9,7 @@ import (
 	"gopkg.in/go-playground/validator.v9"
 )
 
-func Validator() *validator.Validate {
+func invoiceValidator() *validator.Validate {
 	var validate *validator.Validate
 	validate = validator.New()
 	//	validate.RegisterValidation("isInteger", isInteger)
@@ -18,14 +17,17 @@ func Validator() *validator.Validate {
 	//	validate.RegisterValidation("isPrice", isPrice)
 	validate.RegisterValidation("isntSDIPec", isntSDIPec)
 	validate.RegisterValidation("isDateTime", isDateTime)
-	//validate.RegisterValidation("isIva", isIva)
+	validate.RegisterValidation("isIva", isIva)
+	validate.RegisterValidation("isPIVA", isPIVA)
+	validate.RegisterValidation("isCF", isCF)
 	validate.RegisterValidation("isMP", isMP)
 	validate.RegisterValidation("isRF", isRF)
+	validate.RegisterValidation("isTC", isTC)
 	validate.RegisterValidation("isTD", isTD)
 	validate.RegisterValidation("isNatura", isN)
-	validate.RegisterStructValidation(datiTrasmissioneValidate, datiTrasmissione{})
-	validate.RegisterStructValidation(cessionarioCommittenteValidate, CessionarioCommittente{})
-	validate.RegisterStructValidation(validateDatiBeniServizi, DatiBeniServizi{})
+	validate.RegisterValidation("noFuture", noFuture)
+
+	registerAllValidatorStructLevel(validate)
 	return validate
 }
 
@@ -48,42 +50,13 @@ var isN = makeValidatorWithMap(Natura)
 var isMP = makeValidatorWithMap(MetodiPagamento)
 var isTCP = makeValidatorWithMap(TipoCessionePrestazione)
 var isTD = makeValidatorWithMap(TipoDocumento)
+var isTR = makeValidatorWithMap(TipoRitenuta)
+var isCP = makeValidatorWithMap(CondizioniPagamento)
 
 // control id Field is Integer
 func isInteger(t validator.FieldLevel) bool {
 	_, err := strconv.Atoi(t.Field().String())
 	if err != nil {
-		return false
-	}
-	return true
-}
-
-//Check the data hold block, which must be filled in case of DatiCassaPrevidenziale.Ritenuta == "SI"
-func checkDatiRitenuta(d validator.StructLevel) {
-	data := d.Current().Interface().(DatiGeneraliDocumento)
-	if data.DatiCassaPrevidenziale.Ritenuta == "SI" {
-		if *data.DatiRitenuta == (DatiRitenuta{}) {
-			d.ReportError(data.DatiRitenuta, "struct", "all", "required", "")
-		} else {
-			validate := Validator()
-			if err := validate.Struct(data.DatiRitenuta); err != nil {
-				d.ReportError("DatiRitenuta", "", fmt.Sprintf("%s", err), "", "")
-			}
-
-		}
-	}
-
-}
-
-// control is is a price number 0.00
-func isPrice(d validator.FieldLevel) bool {
-	s := d.Field().String()
-	val, err := strconv.ParseFloat(s, 32)
-	if err != nil {
-		return false
-	}
-	stringVersion := fmt.Sprintf("%.2f", val)
-	if s != stringVersion {
 		return false
 	}
 	return true
@@ -96,6 +69,20 @@ func isDate(field validator.FieldLevel) bool {
 	if err != nil {
 		return false
 	}
+	return true
+}
+
+func noFuture(field validator.FieldLevel) bool {
+
+	data := field.Field().String()
+	t, err := time.Parse(`2006-01-02`, data)
+	if err != nil {
+		return false
+	}
+	if t.Unix() > time.Now().Unix() {
+		return false
+	}
+
 	return true
 }
 
@@ -117,11 +104,39 @@ func isntSDIPec(field validator.FieldLevel) bool {
 }
 
 func isIva(field validator.FieldLevel) bool {
-	c := field.Field().String()
-	_, err := strconv.ParseFloat(c, 32)
+	value := field.Field().Float()
+	// controlli
+	if value > 100 {
+		return false
+	}
+	if value < 0 {
+		return false
+	}
+
+	return true
+}
+
+//controllo se la partita iva è corretta questo controllo se fallisce genera l'errore 00301
+func isPIVA(t validator.FieldLevel) bool {
+	data := t.Field().String()
+	ok, err := CheckPIVA(data)
 	if err != nil {
-		log.Println("ERROR: ", err)
+		log.Println(err)
+	}
+	return ok
+}
+
+//controlla se è un codice fiscale italiano valido oppure PIVa
+func isCF(t validator.FieldLevel) bool {
+	data := t.Field().String()
+	if ok, err := CheckCodiceFiscale(data); ok == true {
+		log.Println(err)
 		return true
 	}
-	return false
+	ok, err := CheckPIVA(data)
+	if err != nil {
+		log.Println(err)
+	}
+	return ok
+
 }

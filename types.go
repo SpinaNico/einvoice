@@ -1,8 +1,5 @@
 package einvoice
 
-const ivaZeroNatureWrong = "ivaZeroNatureWrong"
-const carbWrongArticleCode = "carbWrongArticle"
-
 var TipoCessionePrestazione = map[string]string{
 	"SC": "Sconto",
 	"PR": "Premio",
