@@ -34,7 +34,7 @@ func invoiceValidator() *validator.Validate {
 func makeValidatorWithMap(mapped map[string]string) func(validator.FieldLevel) bool {
 	return func(in validator.FieldLevel) bool {
 		data := in.Field().String()
-		for key, _ := range mapped {
+		for key := range mapped {
 			if data == key {
 				return false
 			}
