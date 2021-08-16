@@ -7,7 +7,7 @@ import (
 )
 
 func registerAllValidatorStructLevel(validate *validator.Validate) {
-	validate.RegisterStructValidation(datiTrasmissioneValidate, datiTrasmissione{})
+	validate.RegisterStructValidation(datiTrasmissioneValidate, DatiTrasmissione{})
 	validate.RegisterStructValidation(validateCessionarioCommitente, CessionarioCommittente{})
 	validate.RegisterStructValidation(validateDatiBeniServizi, DatiBeniServizi{})
 	validate.RegisterStructValidation(validateDatiCassaPrevidenziale, DatiCassaPrevidenziale{})
@@ -68,7 +68,7 @@ func validateCodiceArticolo(d validator.StructLevel) {
 // This control at the structure level is essential, check that if the
 // target code is "0000000" the pec is not empty
 func datiTrasmissioneValidate(d validator.StructLevel) {
-	data := d.Current().Interface().(datiTrasmissione)
+	data := d.Current().Interface().(DatiTrasmissione)
 	if data.CodiceDestinatario == "0000000" {
 		if data.PECDestinatario == "" {
 			d.ReportError(data.PECDestinatario, "PECDestinatario", "", "required", "")

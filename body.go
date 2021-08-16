@@ -20,12 +20,12 @@ type CodiceArticolo struct {
 	CodiceValore string `xml:"CodiceValore" json:"CodiceValore" validate:"max=35"`
 }
 
-type datiAnagraficiVettore struct {
+type DatiAnagraficiVettore struct {
 	Anagrafica   *Anagrafica   `xml:"Anagrafica" json:"Anagrafica"`
 	IDFiscaleIVA *IDFiscaleIVA `xml:"IdFiscaleIVA" json:"IdFiscaleIVA"`
 }
 
-type datiRiepilogo struct {
+type DatiRiepilogo struct {
 	//DatiIVA        *DatiIVA `xml:"DatiIVA" json:"DatiIVA"`
 	AlliquotaIVA      float64 `xml:"AliquotaIVA" json:"AliquotaIVA" validiate:"isIva"`
 	Natura            string  `xml:"Natura" json:"Natura" validate:"omitempty,isNatura"`
@@ -59,7 +59,7 @@ type DettaglioLinee struct {
 
 type DatiBeniServizi struct {
 	DettaglioLinee []*DettaglioLinee `xml:"DettaglioLinee" json:"DettaglioLinee" `
-	DatiRiepilogo  []*datiRiepilogo  `xml:"DatiRiepilogo" json:"DatiRiepilogo"`
+	DatiRiepilogo  []*DatiRiepilogo  `xml:"DatiRiepilogo" json:"DatiRiepilogo"`
 }
 
 type DatiBollo struct {
@@ -87,11 +87,11 @@ type DatiDocumentiCorrelatiType struct {
 	CodiceCUP                 string `xml:"CodiceCUP" json:"CodiceCUP" validate:"max=15"`
 	CodiceCIG                 string `xml:"CodiceCIG" json:"CodiceCIG" validate:"max=15"`
 }
-type datiConvenzione = DatiDocumentiCorrelatiType
-type datiOrdineAcquisto = DatiDocumentiCorrelatiType
-type datiContratto = DatiDocumentiCorrelatiType
-type datiFattureCollegate = DatiDocumentiCorrelatiType
-type datiRicezione = DatiDocumentiCorrelatiType
+type DatiConvenzione = DatiDocumentiCorrelatiType
+type DatiOrdineAcquisto = DatiDocumentiCorrelatiType
+type DatiContratto = DatiDocumentiCorrelatiType
+type DatiFattureCollegate = DatiDocumentiCorrelatiType
+type DatiRicezione = DatiDocumentiCorrelatiType
 
 type DatiDDT struct {
 	NumeroDDT              string `xml:"NumeroDDT" json:"NumeroDDT" validate:"max=20"`
@@ -116,11 +116,11 @@ type DatiGeneraliDocumento struct {
 
 type DatiGenerali struct {
 	DatiGeneraliDocumento *DatiGeneraliDocumento `xml:"DatiGeneraliDocumento" json:"DatiGeneraliDocumento"`
-	DatiOrdineAcquisto    *datiOrdineAcquisto    `xml:"DatiOrdineAcquisto,omitempity" json:"DatiOrdineAcquisto"`
-	DatiContratto         *datiContratto         `xml:"DatiContratto" json:"DatiContratto"`
-	DatiConvenzione       *datiConvenzione       `xml:"DatiConvenzione" json:"DatiConvenzione"`
-	DatiRicezione         *datiRicezione         `xml:"DatiRicezione" json:"DatiRicezione"`
-	DatiFattureCollegate  *datiFattureCollegate  `xml:"DatiFattureCollegate" json:"DatiFattureCollegate"`
+	DatiOrdineAcquisto    *DatiOrdineAcquisto    `xml:"DatiOrdineAcquisto,omitempity" json:"DatiOrdineAcquisto"`
+	DatiContratto         *DatiContratto         `xml:"DatiContratto" json:"DatiContratto"`
+	DatiConvenzione       *DatiConvenzione       `xml:"DatiConvenzione" json:"DatiConvenzione"`
+	DatiRicezione         *DatiRicezione         `xml:"DatiRicezione" json:"DatiRicezione"`
+	DatiFattureCollegate  *DatiFattureCollegate  `xml:"DatiFattureCollegate" json:"DatiFattureCollegate"`
 	DatiSAL               *DatiSAL               `xml:"DatiSAL" json:"DatiSAL"`
 	DatiDDT               *DatiDDT               `xml:"DatiDDT" json:"DatiDDT"`
 	DatiTrasporto         *DatiTrasporto         `xml:"DatiTrasporto" json:"DatiTrasporto" validate:"omitempty"`
@@ -149,7 +149,7 @@ type DatiSAL struct {
 }
 
 type DatiTrasporto struct {
-	DatiAnagraficiVettore *datiAnagraficiVettore `xml:"DatiAnagraficiVettore" json:"DatiAnagraficiVettore"`
+	DatiAnagraficiVettore *DatiAnagraficiVettore `xml:"DatiAnagraficiVettore" json:"DatiAnagraficiVettore"`
 	MezzoTrasporto        string                 `xml:"MezzoTrasporto" json:"MezzoTrasporto" validate:"omitempty,max=80"`
 	CausaleTrasporto      string                 `xml:"CausaleTrasporto" json:"CausaleTrasporto" validate:"omitempty,max=100"`
 	NumeroColli           int                    `xml:"NumeroColli" json:"NumeroColli" validate:"omitempty,max=9999,min=0"`

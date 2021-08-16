@@ -1,6 +1,6 @@
 package einvoice
 
-type datiTrasmissione struct {
+type DatiTrasmissione struct {
 	IDTrasmittente *IDFiscaleIVA `xml:"IdTrasmittente" json:"IdTrasmittente" validate:"required"`
 	//ProgressivoInvio: progressivo che il soggetto trasmittente attribuisce
 	//al file che inoltra al Sistema di Interscambio per una propria finalità di
@@ -30,7 +30,7 @@ type datiTrasmissione struct {
 	// - L'amministrazione publica ha il codice univoco di soli  6 caratteri
 	//   corrisponde al numero di ufficio
 	CodiceDestinatario   string                `xml:"CodiceDestinatario" json:"CodiceDestinatario" validate:"min=6,max=7"`
-	ContattiTrasmittente *contattiTrasmittente `xml:"ContattiTrasmittente" json:"ContattiTrasmittente"`
+	ContattiTrasmittente *ContattiTrasmittente `xml:"ContattiTrasmittente" json:"ContattiTrasmittente"`
 
 	//PECDestinatario: indirizzo di Posta Elettronica Certificata al quale, se
 	//valorizzato, viene recapitata la fattura nei casi in cui il valore di
@@ -40,7 +40,7 @@ type datiTrasmissione struct {
 }
 
 // Trovi descrizioni nella sezione 2.2.4.1 Dati Anagrafici
-type datiAnagrafici struct {
+type DatiAnagrafici struct {
 	CodiceFiscale string        `xml:"CodiceFiscale" json:"CodiceFiscale" validate:"omitempty,min=11,max=16,isCF"`
 	Anagrafica    *Anagrafica   `xml:"Anagrafica" json:"Anagrafica"`
 	IDFiscaleIVA  *IDFiscaleIVA `xml:"IdFiscaleIVA" json:"IdFiscaleIVA"`
@@ -57,23 +57,23 @@ type datiAnagrafici struct {
 	RegimeFiscale string `xml:"RegimeFiscale" json:"RegimeFiscale" validate:"omitempty,len=4,startswith=RF,isRF"`
 }
 
-type contatti struct {
+type Contatti struct {
 	Telefono string `xml:"Telefono" json:"Telefono" validate:"omitempty,min=5,max=12"`
 	//todo: Validate Fax
 	Fax   string `xml:"Fax" json:"Fax"`
 	Email string `xml:"Email" json:"Email" validate:"omitempty,email,max=255"`
 }
 
-type contattiTrasmittente struct {
+type ContattiTrasmittente struct {
 	Telefono string `xml:"Telefono" json:"Telefono" validate:"omitempty,min=5,max=12"`
 	Email    string `xml:"Email" json:"Email" validate:"omitempty,email,max=255"`
 }
 
 // CedentePrestatore rappresent your company
 type CedentePrestatore struct {
-	DatiAnagrafici *datiAnagrafici `xml:"DatiAnagrafici" json:"DatiAnagrafici"`
+	DatiAnagrafici *DatiAnagrafici `xml:"DatiAnagrafici" json:"DatiAnagrafici"`
 	Sede           *IndirizzoType  `xml:"Sede" json:"Sede"`
-	Contatti       *contatti       `xml:"Contatti" json:"Contatti"`
+	Contatti       *Contatti       `xml:"Contatti" json:"Contatti"`
 }
 
 //TODO:
@@ -82,7 +82,7 @@ type CedentePrestatore struct {
 
 // CessionarioCommittente this struct rappresent client/customers
 type CessionarioCommittente struct {
-	DatiAnagrafici *datiAnagrafici `xml:"DatiAnagrafici" json:"DatiAnagrafici"`
+	DatiAnagrafici *DatiAnagrafici `xml:"DatiAnagrafici" json:"DatiAnagrafici"`
 	Sede           *IndirizzoType  `xml:"Sede" json:"Sede"`
 
 	// Da valorizzare solo se il cessionario non è un residente
@@ -104,7 +104,7 @@ type terzoIntermediarioOSoggettoEmittente struct {
 
 //FatturaElettronicaHeader A tree of structures that represents the Header of an Italian electronic bill
 type FatturaElettronicaHeader struct {
-	DatiTrasmissione                     *datiTrasmissione                     `xml:"DatiTrasmissione" json:"DatiTrasmissione"`
+	DatiTrasmissione                     *DatiTrasmissione                     `xml:"DatiTrasmissione" json:"DatiTrasmissione"`
 	CedentePrestatore                    *CedentePrestatore                    `xml:"CedentePrestatore" json:"CedentePrestatore"`
 	RappresentanteFiscale                *rappresentanteFiscale                `xml:"RappresentanteFiscale" json:"RappresentanteFiscale" validate:"omitempty"`
 	CessionarioCommittente               *CessionarioCommittente               `xml:"CessionarioCommittente" json:"CessionarioCommittente"`
