@@ -70,10 +70,54 @@ func (i *invoiceSt) AddProduct(product *ProductParams) Invoice {
 
 func (i *invoiceSt) SetCustomer(customer *CustomerParams) Invoice {
 
+	i.checkHeader()
+
+	var cessionarioCommittente = sdi.CessionarioCommittente{
+		DatiAnagrafici: &sdi.DatiAnagrafici{
+			CodiceFiscale: customer.PersonalTaxId,
+			Anagrafica: &sdi.Anagrafica{
+				Denominazione: customer.Denomination,
+				Nome:          customer.FirstName,
+				Cognome:       customer.LastName,
+			},
+		},
+		Sede: &sdi.IndirizzoType{
+			Indirizzo: customer.Address,
+			CAP:       customer.ZipCode,
+			Comune:    customer.City,
+			Provincia: customer.Province,
+			Nazione:   customer.Nation,
+		},
+	}
+
+	i.fat.FatturaElettronicaHeader.CessionarioCommittente = &cessionarioCommittente
+
 	return i
 }
 
 func (i *invoiceSt) SetSeller(seller *SellerParams) Invoice {
+
+	i.checkHeader()
+
+	var cedentePrestatore = sdi.CedentePrestatore{
+		DatiAnagrafici: &sdi.DatiAnagrafici{
+			CodiceFiscale: seller.PersonalTaxId,
+			Anagrafica: &sdi.Anagrafica{
+				Denominazione: seller.Denomination,
+				Nome:          seller.FirstName,
+				Cognome:       seller.LastName,
+			},
+		},
+		Sede: &sdi.IndirizzoType{
+			Indirizzo: seller.Address,
+			CAP:       seller.ZipCode,
+			Comune:    seller.City,
+			Provincia: seller.Province,
+			Nazione:   seller.Nation,
+		},
+	}
+
+	i.fat.FatturaElettronicaHeader.CedentePrestatore = &cedentePrestatore
 
 	return i
 }
@@ -98,6 +142,13 @@ func (i *invoiceSt) checkBody() {
 
 }
 
+func (i *invoiceSt) checkHeader() {
+	if i.fat.FatturaElettronicaHeader == nil {
+		i.fat.FatturaElettronicaHeader = createHeader()
+	}
+
+}
+
 func createBody() *sdi.FatturaElettronicaBody {
 	body := &sdi.FatturaElettronicaBody{
 		DatiGenerali: &sdi.DatiGenerali{
@@ -107,4 +158,19 @@ func createBody() *sdi.FatturaElettronicaBody {
 		DatiPagamento:   &sdi.DatiPagamento{},
 	}
 	return body
+}
+
+func createHeader() *sdi.FatturaElettronicaHeader {
+	header := &sdi.FatturaElettronicaHeader{
+		DatiTrasmissione: &sdi.DatiTrasmissione{},
+		CedentePrestatore: &sdi.CedentePrestatore{
+			DatiAnagrafici: &sdi.DatiAnagrafici{},
+			Sede:           &sdi.IndirizzoType{},
+		},
+		CessionarioCommittente: &sdi.CessionarioCommittente{
+			DatiAnagrafici: &sdi.DatiAnagrafici{},
+			Sede:           &sdi.IndirizzoType{},
+		},
+	}
+	return header
 }

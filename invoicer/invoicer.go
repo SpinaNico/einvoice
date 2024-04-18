@@ -13,14 +13,10 @@ func (i *invoicerImple) CreateEmptyInvoice(uniqueNumber string) Invoice {
 
 	return &invoiceSt{
 		fat: &sdi.FatturaElettronica{
-			FatturaElettronicaHeader: &sdi.FatturaElettronicaHeader{
-				DatiTrasmissione: &sdi.DatiTrasmissione{
-					ProgressivoInvio: uniqueNumber,
-				},
-			},
+			FatturaElettronicaHeader: createHeader(),
 
 			FatturaElettronicaBody: []*sdi.FatturaElettronicaBody{
-				{},
+				createBody(),
 			},
 		},
 	}

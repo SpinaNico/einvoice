@@ -16,8 +16,9 @@ type ProductParams struct {
 }
 
 type CustomerParams struct {
-	Nation string
-	TaxId  string
+	Nation        string
+	CompanyTaxId  string
+	PersonalTaxId string
 
 	FirstName string
 	LastName  string
@@ -28,8 +29,6 @@ type CustomerParams struct {
 	ZipCode  string
 	City     string
 	Province string
-	Country  string
-	Region   string
 }
 
 type SellerParams struct {
