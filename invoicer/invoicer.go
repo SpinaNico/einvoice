@@ -1,6 +1,11 @@
 package invoicer
 
-import "github.com/spinanico/einvoice/sdi"
+import (
+	"encoding/xml"
+	"os"
+
+	"github.com/spinanico/einvoice/sdi"
+)
 
 func New() Invoicer {
 	return &invoicerImple{}
@@ -23,9 +28,28 @@ func (i *invoicerImple) CreateEmptyInvoice(uniqueNumber string) Invoice {
 }
 
 func (i *invoicerImple) FromFile(filePath string) (Invoice, error) {
-	return nil, nil
+
+	file, err := os.ReadFile(filePath)
+	if err != nil {
+		return nil, err
+	}
+
+	return i.FromBytes(file)
+
 }
 
 func (i *invoicerImple) FromBytes(data []byte) (Invoice, error) {
-	return nil, nil
+
+	fat := &sdi.FatturaElettronica{}
+
+	err := xml.Unmarshal(data, fat)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return &invoiceSt{
+		fat: fat,
+	}, nil
+
 }
