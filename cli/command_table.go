@@ -1,4 +1,4 @@
-package cli
+package main
 
 import (
 	"fmt"
@@ -38,7 +38,7 @@ func readerOfDir(dir string, format string) []string {
 	return output
 }
 
-func CommandTable() *cobra.Command {
+func commandTable() *cobra.Command {
 
 	c := cobra.Command{
 		Aliases: []string{"list", "l"},

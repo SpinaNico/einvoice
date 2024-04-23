@@ -54,5 +54,6 @@ var TipiDocumento = map[TipoDocumento]string{
 
 func IsValidTipoDocumento(tipo TipoDocumento) bool {
 	_, ok := TipiDocumento[tipo]
+
 	return ok
 }
