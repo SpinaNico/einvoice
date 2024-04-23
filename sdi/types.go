@@ -1,6 +1,7 @@
 package sdi
 
-const HeaderXMLInvoice = `<?xml version="1.0" encoding="UTF-8"?>`
+const HeaderXMLInvoice = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>`
+const SpaceValue = "http://ivaservizi.agenziaentrate.gov.it/docs/xsd/fatture/v1.2"
 
 type FormatoTrasmissione string
 

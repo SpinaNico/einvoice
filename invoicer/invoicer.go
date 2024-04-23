@@ -2,6 +2,7 @@ package invoicer
 
 import (
 	"encoding/xml"
+	"fmt"
 	"os"
 
 	"github.com/spinanico/einvoice/sdi"
@@ -14,14 +15,34 @@ func New() Invoicer {
 type invoicerImple struct {
 }
 
-func (i *invoicerImple) CreateEmptyInvoice(uniqueNumber string) Invoice {
+func (i *invoicerImple) CreateEmptyInvoice(uniqueNumber string, namespace string) Invoice {
+
+	header := createHeader()
+
+	if namespace == "" {
+		namespace = "ns"
+	}
+
+	header.DatiTrasmissione.ProgressivoInvio = uniqueNumber
 
 	return &invoiceSt{
 		fat: &sdi.FatturaElettronica{
-			FatturaElettronicaHeader: createHeader(),
+			Versione:                 sdi.FPR12,
+			FatturaElettronicaHeader: header,
 
 			FatturaElettronicaBody: []*sdi.FatturaElettronicaBody{
 				createBody(),
+			},
+			XMLName: xml.Name{
+				Local: fmt.Sprintf("%s:FatturaElettronica", namespace),
+				//Space: sdi.SpaceValue,
+			},
+			Xmlns: xml.Attr{
+				Name: xml.Name{
+					Local: fmt.Sprintf("xmlns:%s", namespace),
+					//Space: sdi.SpaceValue,
+				},
+				Value: sdi.SpaceValue,
 			},
 		},
 	}
@@ -51,5 +72,16 @@ func (i *invoicerImple) FromBytes(data []byte) (Invoice, error) {
 	return &invoiceSt{
 		fat: fat,
 	}, nil
+
+}
+
+func (i *invoicerImple) SaveToFile(invoice Invoice, filePath string) error {
+
+	data, err := xml.MarshalIndent(invoice.(*invoiceSt).fat, "", "    ")
+	if err != nil {
+		return err
+	}
+
+	return os.WriteFile(filePath, []byte(fmt.Sprintf("%s\n%s", sdi.HeaderXMLInvoice, data)), 0644)
 
 }

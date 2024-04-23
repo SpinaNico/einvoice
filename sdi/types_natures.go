@@ -58,3 +58,11 @@ func IsValidNatura(natura Natura) bool {
 	_, ok := Nature[natura]
 	return ok
 }
+
+func (n Natura) Ptr() *Natura {
+
+	if !IsValidNatura(n) {
+		return nil
+	}
+	return &n
+}

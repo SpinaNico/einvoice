@@ -3,7 +3,6 @@ package sdi
 import (
 	"encoding/xml"
 	"fmt"
-	"os"
 	"time"
 )
 
@@ -82,9 +81,9 @@ type DatiTrasmissione struct {
 }
 
 type DatiAnagrafici struct {
+	IdFiscaleIVA         *IdFiscaleIVA `xml:"IdFiscaleIVA,omitempty" json:"IdFiscaleIVA"`
 	CodiceFiscale        string        `xml:"CodiceFiscale,omitempty" json:"CodiceFiscale" validate:"omitempty,min=11,max=16,isFiscalCode"`
 	Anagrafica           *Anagrafica   `xml:"Anagrafica,omitempty" json:"Anagrafica"`
-	IdFiscaleIVA         *IdFiscaleIVA `xml:"IdFiscaleIVA,omitempty" json:"IdFiscaleIVA"`
 	AlboProfessionale    string        `xml:"AlboProfessionale,omitempty" json:"AlboProfessionale" validate:"omitempty,max=60"`
 	ProvinciaAlbo        string        `xml:"ProvinciaAlbo,omitempty" json:"ProvinciaAlbo" validate:"omitempty,len=2"`
 	NumeroIscrizioneAlbo string        `xml:"NumeroIscrizioneAlbo,omitempty" json:"NumeroIscrizioneAlbo" validate:"omitempty,max=60"`
@@ -186,7 +185,7 @@ type DettaglioLinee struct {
 	PrezzoUnitario             F64                    `xml:"PrezzoUnitario,omitempty" json:"PrezzoUnitario" validate:"min=4,max=21"`
 	ScontoMaggiorazione        []*ScontoMaggiorazione `xml:"ScontoMaggiorazione,omitempty" json:"ScontoMaggiorazione"`
 	PrezzoTotale               F64                    `xml:"PrezzoTotale,omitempty" json:"PrezzoTotale" validate:"min=4,max=21"`
-	AliquotaIVA                F64                    `xml:"AliquotaIVA,omitempty" json:"AliquotaIVA" validate:"isIva"`
+	AliquotaIVA                F64                    `xml:"AliquotaIVA" json:"AliquotaIVA" validate:"isIva"`
 	Ritenuta                   string                 `xml:"Ritenuta,omitempty" json:"Ritenuta" validate:"omitempty,eq=SI"`
 	Natura                     Natura                 `xml:"Natura,omitempty" json:"Natura" validate:"isNatura"`
 	RiferimentoAmministrazione string                 `xml:"RiferimentoAmministrazione,omitempty" json:"RiferimentoAmministrazione" validate:"max=20"`
@@ -354,43 +353,10 @@ type FatturaElettronicaBody struct {
 // FatturaElettronica The structure of a multi body electronic invoice, if you need only one body,
 // just insert a single element in the FatturaElettronicaBod slice...
 type FatturaElettronica struct {
-	XMLName                  xml.Name                  `xml:"FatturaElettronica" `
+	XMLName                  xml.Name
+	Versione                 FormatoTrasmissione       `xml:"versione,attr" json:"Versione"`
 	FatturaElettronicaHeader *FatturaElettronicaHeader `xml:"FatturaElettronicaHeader,omitempty" json:"FatturaElettronicaHeader"`
 	FatturaElettronicaBody   []*FatturaElettronicaBody `xml:"FatturaElettronicaBody,omitempty" json:"FatturaElettronicaBody"`
 	Signature                string                    `xml:"ds:Signature,omitempty" json:"Signature"`
-	Xmlns                    string                    `xml:"xmlns,attr" json:"NameSpace"`
-	Versione                 string                    `xml:"versione,attr" json:"Versione"`
-}
-
-func NewDocument() *FatturaElettronica {
-	var f = &FatturaElettronica{
-
-		Xmlns:    "http://ivaservizi.agenziaentrate.gov.it/docs/xsd/fatture/v1.2",
-		Versione: "FPR12",
-	}
-
-	return f
-}
-
-func FromXML(data []byte) (*FatturaElettronica, error) {
-	doc := NewDocument()
-
-	err := xml.Unmarshal(data, doc)
-	if err != nil {
-		return nil, err
-	}
-
-	return doc, nil
-}
-
-func FromFileXML(path string) (*FatturaElettronica, error) {
-	data, err := os.ReadFile(path)
-	if err != nil {
-		return nil, err
-	}
-	return FromXML(data)
-}
-
-func ToXML(doc *FatturaElettronica) ([]byte, error) {
-	return xml.MarshalIndent(doc, "", "\t")
+	Xmlns                    xml.Attr                  `xml:",attr" json:"Xmlns"`
 }
