@@ -11,6 +11,7 @@ type Invoicer interface {
 	FromFile(filePath string) (Invoice, error)
 	FromBytes(data []byte) (Invoice, error)
 	SaveToFile(Invoice, string) error
+	GetBytes(Invoice) ([]byte, error)
 }
 
 type ProductParams struct {

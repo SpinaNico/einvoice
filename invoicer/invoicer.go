@@ -77,11 +77,21 @@ func (i *invoicerImple) FromBytes(data []byte) (Invoice, error) {
 
 func (i *invoicerImple) SaveToFile(invoice Invoice, filePath string) error {
 
-	data, err := xml.MarshalIndent(invoice.(*invoiceSt).fat, "", "    ")
+	bb, err := i.GetBytes(invoice)
 	if err != nil {
 		return err
 	}
+	return os.WriteFile(filePath, bb, 0644)
 
-	return os.WriteFile(filePath, []byte(fmt.Sprintf("%s\n%s", sdi.HeaderXMLInvoice, data)), 0644)
+}
+
+func (i *invoicerImple) GetBytes(invoice Invoice) ([]byte, error) {
+
+	data, err := xml.MarshalIndent(invoice.(*invoiceSt).fat, "", "    ")
+	if err != nil {
+		return nil, err
+	}
+
+	return []byte(fmt.Sprintf("%s\n%s", sdi.HeaderXMLInvoice, data)), nil
 
 }
