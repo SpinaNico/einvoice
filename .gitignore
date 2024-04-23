@@ -3,3 +3,5 @@
 schema.xsd
 docs
 test/
+_/**
+_/
