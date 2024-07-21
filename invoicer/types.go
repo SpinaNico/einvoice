@@ -12,6 +12,8 @@ type Invoicer interface {
 	FromBytes(data []byte) (Invoice, error)
 	SaveToFile(Invoice, string) error
 	GetBytes(Invoice) ([]byte, error)
+
+	GetRawInvoice(Invoice) *sdi.FatturaElettronica
 }
 
 type ProductParams struct {

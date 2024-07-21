@@ -95,3 +95,7 @@ func (i *invoicerImple) GetBytes(invoice Invoice) ([]byte, error) {
 	return []byte(fmt.Sprintf("%s\n%s", sdi.HeaderXMLInvoice, data)), nil
 
 }
+
+func (i *invoicerImple) GetRawInvoice(invoice Invoice) *sdi.FatturaElettronica {
+	return invoice.(*invoiceSt).fat
+}
